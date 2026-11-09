@@ -42,15 +42,23 @@ test('customer and seller accounts validate details and can log in again', async
   await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
   const base = 'http://127.0.0.1:' + server.address().port;
   const call = async (path, payload) => {
+    if (path === '/api/auth/register') payload = { firstName: 'अनिता', lastName: 'Kumar', ...payload };
     const response = await fetch(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
     return { status: response.status, data: await response.json() };
   };
   try {
+    const invalidName = await call('/api/auth/register', { role: 'customer', email: 'missing@example.com', password: 'password1', firstName: '   ' });
+    assert.equal(invalidName.status, 400);
+    assert.equal(invalidName.data.error.code, 'INVALID_NAME');
+    const longName = await call('/api/auth/register', { role: 'customer', email: 'long@example.com', password: 'password1', lastName: 'a'.repeat(101) });
+    assert.equal(longName.status, 400);
     const invalidCustomer = await call('/api/auth/register', { role: 'customer', email: 'not-an-email', password: 'password1' });
     assert.equal(invalidCustomer.status, 400);
     const customer = await call('/api/auth/register', { role: 'customer', email: 'buyer@example.com', password: 'password1' });
     assert.equal(customer.status, 201);
     assert.equal(customer.data.account.phone, null);
+    assert.equal(customer.data.account.firstName, 'अनिता');
+    assert.equal(customer.data.account.lastName, 'Kumar');
     const seller = await call('/api/auth/register', { role: 'seller', email: 'seller@example.com', phone: '9876543210', password: 'password1' });
     assert.equal(seller.status, 201);
     assert.equal(seller.data.account.phone, '+919876543210');
@@ -58,6 +66,9 @@ test('customer and seller accounts validate details and can log in again', async
       const sellerLogin = await call('/api/auth/login', { role: 'seller', identifier, password: 'password1' });
       assert.equal(sellerLogin.status, 200);
       assert.equal(sellerLogin.data.account.id, seller.data.account.id);
+      assert.equal(sellerLogin.data.account.firstName, 'अनिता');
+      assert.equal(sellerLogin.data.account.lastName, 'Kumar');
+      assert.equal(sellerLogin.data.account.hash, undefined);
     }
     const wrongSellerPassword = await call('/api/auth/login', { role: 'seller', identifier: '9876543210', password: 'wrongpass' });
     assert.equal(wrongSellerPassword.status, 401);

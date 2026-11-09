@@ -46,7 +46,7 @@ async function findAccount(email, role) {
     return (await fileUsers()).find(account => account.email === email && (!role || account.role === role));
   }
   const result = await databasePool().query(
-    'SELECT id::text AS id, role, email, phone, password_salt AS salt, password_hash AS hash, created_at AS "createdAt" FROM users WHERE email = $1 AND ($2::text IS NULL OR role = $2)',
+    'SELECT id::text AS id, role, email, phone, first_name AS "firstName", last_name AS "lastName", password_salt AS salt, password_hash AS hash, created_at AS "createdAt" FROM users WHERE email = $1 AND ($2::text IS NULL OR role = $2)',
     [email, role || null],
   );
   return result.rows[0];
@@ -59,8 +59,8 @@ async function saveAccount(account) {
     return;
   }
   await databasePool().query(
-    'INSERT INTO users (id, role, email, phone, password_salt, password_hash, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
-    [account.id, account.role, account.email, account.phone, account.salt, account.hash, account.createdAt],
+    'INSERT INTO users (id, role, email, phone, password_salt, password_hash, created_at, first_name, last_name) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)',
+    [account.id, account.role, account.email, account.phone, account.salt, account.hash, account.createdAt, account.firstName, account.lastName],
   );
 }
 async function findLoginAccount(identifier, role) {
@@ -73,7 +73,7 @@ async function findLoginAccount(identifier, role) {
     return matches.length === 1 ? matches[0] : null;
   }
   const result = await databasePool().query(
-    'SELECT id::text AS id, role, email, phone, password_salt AS salt, password_hash AS hash, created_at AS "createdAt" FROM users WHERE role = $1 AND phone = $2',
+    'SELECT id::text AS id, role, email, phone, first_name AS "firstName", last_name AS "lastName", password_salt AS salt, password_hash AS hash, created_at AS "createdAt" FROM users WHERE role = $1 AND phone = $2',
     [role, phone],
   );
   return result.rowCount === 1 ? result.rows[0] : null;
@@ -87,7 +87,7 @@ async function passwordMatches(password, account) {
   return timingSafeEqual(Buffer.from(result.hash, 'hex'), Buffer.from(account.hash, 'hex'));
 }
 function publicAccount(account) {
-  return { id: account.id, role: account.role, email: account.email, phone: account.phone || null, createdAt: account.createdAt };
+  return { id: account.id, role: account.role, email: account.email, phone: account.phone || null, firstName: account.firstName || null, lastName: account.lastName || null, createdAt: account.createdAt };
 }
 
 function send(res, status, data, contentType = 'application/json') {
@@ -120,12 +120,17 @@ export async function handle(req, res) {
       const email = normalizeEmail(b.email);
       const password = String(b.password || '');
       const phone = role === 'seller' ? normalizePhone(b.phone) : null;
+      const firstName = typeof b.firstName === 'string' ? b.firstName.trim() : '';
+      const lastName = typeof b.lastName === 'string' ? b.lastName.trim() : '';
+      if (!firstName || !lastName || [...firstName].length > 100 || [...lastName].length > 100 || /[\p{Cc}\p{Cf}]/u.test(firstName + lastName)) {
+        return fail(res, 400, 'INVALID_NAME', 'First and last names must contain 1 to 100 characters');
+      }
       if (!role || !EMAIL.test(email) || password.length < 8 || (role === 'seller' && !phone)) {
         return fail(res, 400, 'INVALID_AUTH_INPUT', 'Enter a valid email, an 8-character password, and a valid Indian phone number for sellers');
       }
       if (await findAccount(email)) return fail(res, 409, 'ACCOUNT_EXISTS', 'An account already exists for this email');
       const { salt, hash } = await passwordHash(password);
-      const account = { id: randomUUID(), role, email, phone, salt, hash, createdAt: new Date().toISOString() };
+      const account = { id: randomUUID(), role, email, phone, firstName, lastName, salt, hash, createdAt: new Date().toISOString() };
       await saveAccount(account);
       return send(res, 201, { account: publicAccount(account) });
     }

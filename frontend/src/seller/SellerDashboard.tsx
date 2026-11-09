@@ -4,6 +4,7 @@ import { Pressable, Text, useWindowDimensions, View } from 'react-native';
 import { useSeller } from './SellerProvider';
 import { Action, EmptyState, Money, PageHeader, ProductPhoto, SectionLink, StatusBadge, type Translate } from './SellerUI';
 import { c, st } from './styles';
+import { useAppState } from '../app/_layout';
 
 function Metric({ number, label, glyph, tint, width }: { number: number; label: string; glyph: string; tint: string; width?: number }) {
   return <View style={[st.card, st.metric, width === undefined ? undefined : { width, flexGrow: 0, flexBasis: width, minWidth: 0 }]}>
@@ -12,6 +13,8 @@ function Metric({ number, label, glyph, tint, width }: { number: number; label: 
   </View>;
 }
 export function SellerDashboard({ t }: { t: Translate }) {
+  const { account } = useAppState();
+  const firstName = account?.role === 'seller' ? account.firstName?.trim() : null;
   const { drafts, listings, requests, remoteAvailable, refreshRemote } = useSeller();
   const screenWidth = useWindowDimensions().width;
   const mobile = screenWidth < 900;
@@ -19,7 +22,7 @@ export function SellerDashboard({ t }: { t: Translate }) {
   const pending = requests.filter(item => item.status === 'pending');
   const accepted = requests.filter(item => item.status === 'accepted');
   return <View>
-    <PageHeader kicker={t('sellerHub')} title={t('welcomeSeller')} subtitle={t('welcomeSub')}
+    <PageHeader kicker={t('sellerHub')} title={firstName ? t('welcomeByName').replace('{name}', () => firstName) : t('welcomeSeller')} subtitle={t('welcomeSub')}
       action={<View style={st.row}>
         <Action label={t('transport')} onPress={() => router.navigate('/transport')} secondary />
         <Action label={t('addProduct')} onPress={() => router.navigate('/seller/new')} />

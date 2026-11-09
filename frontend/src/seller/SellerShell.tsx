@@ -5,6 +5,7 @@ import { useAppState } from '../app/_layout';
 import { localeLabels, type Key, type Locale } from '../i18n';
 import { useSeller } from './SellerProvider';
 import { c, st } from './styles';
+import { AccountMenu } from '../AccountMenu';
 
 const navigation: { href: '/seller' | '/seller/inventory' | '/seller/new' | '/seller/drafts' | '/seller/orders'; key: Key; glyph: string }[] = [
   { href: '/seller', key: 'dashboard', glyph: '▦' },
@@ -34,15 +35,12 @@ export function SellerShell({ children }: { children: React.ReactNode }) {
         <View><Text style={st.brandName}>Minor Project</Text><Text style={st.brandSub}>{t('sellerHub')}</Text></View>
       </View>
       <View style={[st.headerRight, !wide && { width: '100%' }]}>
-        <View style={st.headerBadge}><Text style={st.headerBadgeText}>{t('pilotLocation')}</Text></View>
-        <Pressable onPress={() => account ? logOut() : router.navigate('/auth')} accessibilityRole="button" style={st.loginButton}>
-          <Text style={st.loginText}>{t(account ? 'logOut' : 'registerLogin')}</Text>
-        </Pressable>
         {(Object.keys(localeLabels) as Locale[]).map(l =>
           <Pressable key={l} onPress={() => setLocale(l)} accessibilityRole="button" accessibilityLabel={localeLabels[l]}
             style={[st.localePill, locale === l && st.localePillActive]}>
             <Text style={[st.localeText, locale === l && st.localeTextActive]}>{localeLabels[l]}</Text>
           </Pressable>)}
+        <AccountMenu account={account} logOut={logOut} t={t} />
       </View>
     </View></View>
     {(locale === 'hlb' || locale === 'gon') && <View style={st.warning}><Text style={st.warningText}>{t('provisional')}</Text></View>}

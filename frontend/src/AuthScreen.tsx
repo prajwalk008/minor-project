@@ -15,11 +15,19 @@ export function AuthScreen({ t, onSignIn }: Props) {
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
   const isSeller = role === 'seller';
   const submit = async () => {
+    const cleanFirstName = firstName.trim();
+    const cleanLastName = lastName.trim();
+    if (mode === 'register' && (!cleanFirstName || !cleanLastName || [...cleanFirstName].length > 100 || [...cleanLastName].length > 100 || /[\p{Cc}\p{Cf}]/u.test(cleanFirstName + cleanLastName))) {
+      setMessage(t('invalidName'));
+      return;
+    }
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.trim().replace(/[\s()-]/g, '');
     const validIdentifier = EMAIL.test(cleanEmail) || (isSeller && mode === 'login' && INDIA_PHONE.test(cleanEmail.replace(/[\s()-]/g, '')));
@@ -31,11 +39,11 @@ export function AuthScreen({ t, onSignIn }: Props) {
     setMessage('');
     try {
       const response = mode === 'register'
-        ? await registerAccount({ role, email: cleanEmail, password, ...(isSeller ? { phone: cleanPhone } : {}) })
+        ? await registerAccount({ role, email: cleanEmail, password, firstName: cleanFirstName, lastName: cleanLastName, ...(isSeller ? { phone: cleanPhone } : {}) })
         : await loginAccount({ role, identifier: cleanEmail, password });
       onSignIn(response.account);
       setMessage(t('authSuccess') + ' ' + response.account.email);
-      router.replace(isSeller ? '/seller' : '/buyer');
+      router.replace(isSeller ? '/seller' : '/');
     } catch (error) {
       setMessage(displayError(error, t));
     } finally {
@@ -46,8 +54,8 @@ export function AuthScreen({ t, onSignIn }: Props) {
   const changeMode = (next: Mode) => { setMode(next); setMessage(''); };
   return <ScrollView contentContainerStyle={a.page} style={a.canvas}>
     <View style={a.top}>
-      <Pressable onPress={() => router.replace('/buyer')} accessibilityRole="link"><Text style={a.brand}>MINOR PROJECT</Text></Pressable>
-      <Pressable onPress={() => router.replace('/buyer')} accessibilityRole="link"><Text style={a.back}>{t('backToMarketplace')} ←</Text></Pressable>
+      <Pressable onPress={() => router.replace('/')} accessibilityRole="link"><Text style={a.brand}>MINOR PROJECT</Text></Pressable>
+      <Pressable onPress={() => router.replace('/')} accessibilityRole="link"><Text style={a.back}>{t('backToMarketplace')} ←</Text></Pressable>
     </View>
     <View style={a.content}>
       <View style={a.intro}>
@@ -68,6 +76,10 @@ export function AuthScreen({ t, onSignIn }: Props) {
           <ModeTab label={t('register')} active={mode === 'register'} onPress={() => changeMode('register')} />
         </View>
         <Text style={a.formTitle}>{mode === 'login' ? t('loginAs') : t('registerAs')} {isSeller ? t('seller') : t('customer')}</Text>
+        {mode === 'register' && <>
+          <Field label={t('firstName')} value={firstName} onChangeText={setFirstName} />
+          <Field label={t('lastName')} value={lastName} onChangeText={setLastName} />
+        </>}
         <Field label={t(isSeller && mode === 'login' ? 'emailOrPhone' : 'email')} value={email} onChangeText={setEmail} keyboardType={isSeller && mode === 'login' ? 'default' : 'email-address'} autoCapitalize="none" />
         {isSeller && mode === 'register' && <Field label={t('phone')} value={phone} onChangeText={setPhone} keyboardType="phone-pad" placeholder="+91 9876543210" />}
         <Field label={t('password')} value={password} onChangeText={setPassword} secureTextEntry placeholder={t('passwordHelp')} />

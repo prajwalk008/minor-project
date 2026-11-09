@@ -6,6 +6,7 @@ import { dictionaries, en, localeLabels, type Key, type Locale } from '../i18n';
 import type { Listing } from '../types';
 import { Button, s } from '../ui';
 import type { Account } from '../api';
+import { AccountMenu } from '../AccountMenu';
 
 type AppState = {
   account: Account | null;
@@ -44,14 +45,14 @@ export default function RootLayout() {
   return <AppContext.Provider value={value}>
     <ScrollView style={{ flex: 1, backgroundColor: '#f5f3ed' }} contentContainerStyle={s.page}>
       <View style={s.pageHeader}><View><Text style={s.title}>{t('title')}</Text><Text style={s.muted}>{t('demo')}</Text></View>
-        <Button label={t(account ? 'logOut' : 'registerLogin')} onPress={() => account ? value.logOut() : router.navigate('/auth')} secondary />
+        <AccountMenu account={account} logOut={value.logOut} t={t} />
       </View>
       <View style={s.row}>{(Object.keys(localeLabels) as Locale[]).map(l =>
         <Button key={l} label={localeLabels[l]} onPress={() => setLocale(l)} secondary={locale !== l} />)}</View>
       {(locale === 'hlb' || locale === 'gon') && <Text style={{ backgroundColor: '#fff0c2', padding: 10 }}>{t('provisional')}</Text>}
       <View style={s.row}>
         <Button label={t('seller')} onPress={() => router.navigate('/seller')} secondary={pathname !== '/seller'} />
-        <Button label={t('buyer')} onPress={() => router.navigate('/buyer')} secondary={pathname !== '/buyer'} />
+        <Button label={t('home')} onPress={() => router.navigate('/')} secondary={pathname !== '/'} />
         <Button label={t('transport')} onPress={() => router.navigate('/transport')} secondary={pathname !== '/transport'} />
       </View>
       <Slot />

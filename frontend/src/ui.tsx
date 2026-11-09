@@ -17,6 +17,7 @@ export function Num({ label, value, onChange }: { label: string; value: number; 
 }
 export const s = StyleSheet.create({
   page: { padding: 18, maxWidth: 760, width: '100%', alignSelf: 'center', paddingBottom: 70 },
+  pageHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12 },
   heading: { fontSize: 22, fontWeight: '700', color: '#173b2b', marginTop: 20, marginBottom: 10 },
   title: { fontSize: 27, fontWeight: '800', color: '#173b2b', marginTop: 28 },
   muted: { color: '#5e6b61', marginVertical: 6 }, row: { flexDirection: 'row', flexWrap: 'wrap', gap: 7, marginVertical: 7 },

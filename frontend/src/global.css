@@ -1,0 +1,6 @@
+/* Use the device's sans-serif UI font, with script-appropriate fallbacks. */
+html,
+body,
+body * {
+  font-family: Arial, Helvetica, sans-serif !important;
+}

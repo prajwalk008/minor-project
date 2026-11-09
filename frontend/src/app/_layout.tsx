@@ -1,11 +1,16 @@
 import React, { createContext, useContext, useState } from 'react';
+import '../global.css';
 import { Slot, router, usePathname } from 'expo-router';
 import { ScrollView, Text, View } from 'react-native';
 import { dictionaries, en, localeLabels, type Key, type Locale } from '../i18n';
 import type { Listing } from '../types';
 import { Button, s } from '../ui';
+import type { Account } from '../api';
 
 type AppState = {
+  account: Account | null;
+  signIn: (account: Account) => void;
+  logOut: () => void;
   t: (key: Key) => string;
   locale: Locale;
   setLocale: (locale: Locale) => void;
@@ -21,22 +26,26 @@ export function useAppState(): AppState {
   return value;
 }
 export default function RootLayout() {
+  const [account, setAccount] = useState<Account | null>(null);
   const [locale, setLocale] = useState<Locale>('en');
   const [version, setVersion] = useState(0);
   const [transportListing, setTransportListing] = useState<Listing | null>(null);
   const pathname = usePathname();
   const t = (key: Key) => dictionaries[locale][key] || en[key];
   const value: AppState = {
+    account, signIn: setAccount, logOut: () => setAccount(null),
     t, locale, setLocale, version, transportListing,
     published: () => setVersion(v => v + 1),
     openTransport: listing => { setTransportListing(listing); router.navigate('/transport'); },
   };
-  if (pathname.startsWith('/seller')) {
+  if (pathname.startsWith('/seller') || pathname === '/auth') {
     return <AppContext.Provider value={value}><Slot /></AppContext.Provider>;
   }
   return <AppContext.Provider value={value}>
     <ScrollView style={{ flex: 1, backgroundColor: '#f5f3ed' }} contentContainerStyle={s.page}>
-      <Text style={s.title}>{t('title')}</Text><Text style={s.muted}>{t('demo')}</Text>
+      <View style={s.pageHeader}><View><Text style={s.title}>{t('title')}</Text><Text style={s.muted}>{t('demo')}</Text></View>
+        <Button label={t(account ? 'logOut' : 'registerLogin')} onPress={() => account ? value.logOut() : router.navigate('/auth')} secondary />
+      </View>
       <View style={s.row}>{(Object.keys(localeLabels) as Locale[]).map(l =>
         <Button key={l} label={localeLabels[l]} onPress={() => setLocale(l)} secondary={locale !== l} />)}</View>
       {(locale === 'hlb' || locale === 'gon') && <Text style={{ backgroundColor: '#fff0c2', padding: 10 }}>{t('provisional')}</Text>}

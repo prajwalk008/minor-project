@@ -20,7 +20,10 @@ export function SellerDashboard({ t }: { t: Translate }) {
   const accepted = requests.filter(item => item.status === 'accepted');
   return <View>
     <PageHeader kicker={t('sellerHub')} title={t('welcomeSeller')} subtitle={t('welcomeSub')}
-      action={<Action label={t('addProduct')} onPress={() => router.navigate('/seller/new')} />} />
+      action={<View style={st.row}>
+        <Action label={t('transport')} onPress={() => router.navigate('/transport')} secondary />
+        <Action label={t('addProduct')} onPress={() => router.navigate('/seller/new')} />
+      </View>} />
     <View style={[st.hero, mobile && { flexDirection: 'column', alignItems: 'flex-start' }]}>
       <View style={{ flex: mobile ? 0 : 1, minWidth: mobile ? 0 : 220 }}>
         <Text style={st.heroKicker}>{t('pilotLocation')}</Text>

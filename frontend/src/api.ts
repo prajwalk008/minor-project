@@ -10,6 +10,8 @@ export function displayError(e: unknown, t: (key: Key) => string): string {
       INVALID_INPUT: 'invalid', INVALID_TERMS: 'invalid', INVALID_IMAGE: 'invalid',
       COUNTEROFFER_REQUIRED: 'counterofferRequired', STOCK_UNAVAILABLE: 'stockUnavailable',
       TRANSPORT_UNAVAILABLE: 'transportUnavailable',
+      INVALID_AUTH_INPUT: 'invalidAuthInput', ACCOUNT_EXISTS: 'accountExists',
+      INVALID_CREDENTIALS: 'invalidCredentials',
     };
     return t(codes[e.code] || 'error');
   }
@@ -30,3 +32,10 @@ export async function getSellerRequests() { return (await json<{ requests: Order
 export async function createRequest(input: { listingId: string; buyerName: string; buyerPhone: string; quantity: number }) { return json<OrderRequest>('/api/requests', 'POST', input); }
 export async function setRequestStatus(id: string, data: Record<string, unknown>) { return json<OrderRequest>(`/api/requests/${id}/status`, 'PATCH', data); }
 export async function getMatches(input: Record<string, unknown>) { return (await json<{ matches: Match[] }>('/api/transport/matches', 'POST', input)).matches; }
+export type Account = { id: string; role: 'seller' | 'customer'; email: string; phone: string | null; createdAt: string };
+export async function registerAccount(input: { role: Account['role']; email: string; password: string; phone?: string }) {
+  return json<{ account: Account }>('/api/auth/register', 'POST', input);
+}
+export async function loginAccount(input: { role: Account['role']; identifier: string; password: string }) {
+  return json<{ account: Account }>('/api/auth/login', 'POST', input);
+}

@@ -22,7 +22,7 @@ function NavItem({ item, active, compact }: { item: typeof navigation[number]; a
   </Pressable>;
 }
 export function SellerShell({ children }: { children: React.ReactNode }) {
-  const { t, locale, setLocale } = useAppState();
+  const { t, locale, setLocale, account, logOut } = useAppState();
   const { drafts, remoteAvailable } = useSeller();
   const pathname = usePathname();
   const { width } = useWindowDimensions();
@@ -35,6 +35,9 @@ export function SellerShell({ children }: { children: React.ReactNode }) {
       </View>
       <View style={[st.headerRight, !wide && { width: '100%' }]}>
         <View style={st.headerBadge}><Text style={st.headerBadgeText}>{t('pilotLocation')}</Text></View>
+        <Pressable onPress={() => account ? logOut() : router.navigate('/auth')} accessibilityRole="button" style={st.loginButton}>
+          <Text style={st.loginText}>{t(account ? 'logOut' : 'registerLogin')}</Text>
+        </Pressable>
         {(Object.keys(localeLabels) as Locale[]).map(l =>
           <Pressable key={l} onPress={() => setLocale(l)} accessibilityRole="button" accessibilityLabel={localeLabels[l]}
             style={[st.localePill, locale === l && st.localePillActive]}>

@@ -1,5 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { mkdtemp, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { server } from './index.js';
 
 test('photo and listing retries are idempotent; withdrawn and accepted orders obey stock', async () => {
@@ -31,4 +34,43 @@ test('photo and listing retries are idempotent; withdrawn and accepted orders ob
     const listingAfter = await call(`/api/listings/${listing1.data.id}`, 'GET');
     assert.equal(listingAfter.data.availableQuantity, 1);
   } finally { await new Promise(resolve => server.close(resolve)); }
+});
+
+test('customer and seller accounts validate details and can log in again', async () => {
+  const testDirectory = await mkdtemp(join(tmpdir(), 'minor-project-auth-'));
+  process.env.AUTH_DATA_FILE = join(testDirectory, 'users.json');
+  await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
+  const base = 'http://127.0.0.1:' + server.address().port;
+  const call = async (path, payload) => {
+    const response = await fetch(base + path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    return { status: response.status, data: await response.json() };
+  };
+  try {
+    const invalidCustomer = await call('/api/auth/register', { role: 'customer', email: 'not-an-email', password: 'password1' });
+    assert.equal(invalidCustomer.status, 400);
+    const customer = await call('/api/auth/register', { role: 'customer', email: 'buyer@example.com', password: 'password1' });
+    assert.equal(customer.status, 201);
+    assert.equal(customer.data.account.phone, null);
+    const seller = await call('/api/auth/register', { role: 'seller', email: 'seller@example.com', phone: '9876543210', password: 'password1' });
+    assert.equal(seller.status, 201);
+    assert.equal(seller.data.account.phone, '+919876543210');
+    for (const identifier of ['seller@example.com', '9876543210', '+91 9876543210']) {
+      const sellerLogin = await call('/api/auth/login', { role: 'seller', identifier, password: 'password1' });
+      assert.equal(sellerLogin.status, 200);
+      assert.equal(sellerLogin.data.account.id, seller.data.account.id);
+    }
+    const wrongSellerPassword = await call('/api/auth/login', { role: 'seller', identifier: '9876543210', password: 'wrongpass' });
+    assert.equal(wrongSellerPassword.status, 401);
+    const duplicate = await call('/api/auth/register', { role: 'customer', email: 'buyer@example.com', password: 'password1' });
+    assert.equal(duplicate.status, 409);
+    const rejectedLogin = await call('/api/auth/login', { role: 'customer', email: 'buyer@example.com', password: 'wrongpass' });
+    assert.equal(rejectedLogin.status, 401);
+    const login = await call('/api/auth/login', { role: 'customer', email: 'buyer@example.com', password: 'password1' });
+    assert.equal(login.status, 200);
+    assert.equal(login.data.account.email, 'buyer@example.com');
+  } finally {
+    await new Promise(resolve => server.close(resolve));
+    delete process.env.AUTH_DATA_FILE;
+    await rm(testDirectory, { recursive: true, force: true });
+  }
 });

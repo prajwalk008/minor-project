@@ -10,3 +10,5 @@ frontend/.env.local
 /docs/
 /frontend/.claude/
 /sprint-handoff-1.pdf
+/server/data/
+/server/.env

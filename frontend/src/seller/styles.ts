@@ -18,6 +18,8 @@ export const st = StyleSheet.create({
   headerRight: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: 8 },
   headerBadge: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8, backgroundColor: '#243B55' },
   headerBadgeText: { color: '#E8EFF6', fontSize: 12, fontWeight: '600' },
+  loginButton: { backgroundColor: c.orange, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 8 },
+  loginText: { color: c.navyDeep, fontSize: 12, fontWeight: '900' },
   localePill: { paddingHorizontal: 9, paddingVertical: 7, borderRadius: 7, borderWidth: 1, borderColor: '#647991' },
   localePillActive: { backgroundColor: c.orange, borderColor: c.orange },
   localeText: { color: c.white, fontSize: 11, fontWeight: '700' },

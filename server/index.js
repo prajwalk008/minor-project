@@ -1,16 +1,94 @@
 import http from 'node:http';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
+import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
-import { resolve } from 'node:path';
+import { dirname, resolve } from 'node:path';
+import { promisify } from 'node:util';
+import { databasePool, usesFileAuthStore } from './db.js';
 
 const PORT = Number(process.env.PORT || 4000);
 const TRANSPORT_API_BASE_URL = process.env.TRANSPORT_API_BASE_URL;
+const scrypt = promisify(scryptCallback);
 const seller = { id: 'demo-seller', name: 'Demo Kondagaon Seller', phone: '+910000000000', village: 'Kondagaon', district: 'Kondagaon' };
 const listings = new Map();
 const photos = new Map();
 const requests = new Map();
 const draftIds = new Map();
 const photoIds = new Map();
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+const INDIA_PHONE = /^(?:\+91|91)?[6-9]\d{9}$/;
+
+function normalizeEmail(value) { return String(value || '').trim().toLowerCase(); }
+function authDataFile() { return process.env.AUTH_DATA_FILE; }
+function normalizePhone(value) {
+  const compact = String(value || '').trim().replace(/[\s()-]/g, '');
+  if (!INDIA_PHONE.test(compact)) return null;
+  return compact.startsWith('+91') ? compact : '+91' + compact.replace(/^91/, '');
+}
+async function fileUsers() {
+  try {
+    const data = JSON.parse(await readFile(authDataFile(), 'utf8'));
+    return Array.isArray(data) ? data : [];
+  } catch (error) {
+    if (error.code === 'ENOENT') return [];
+    throw error;
+  }
+}
+async function saveUsers(items) {
+  const target = authDataFile();
+  await mkdir(dirname(target), { recursive: true });
+  const temp = target + '.tmp';
+  await writeFile(temp, JSON.stringify(items, null, 2), 'utf8');
+  await rename(temp, target);
+}
+async function findAccount(email, role) {
+  if (usesFileAuthStore()) {
+    return (await fileUsers()).find(account => account.email === email && (!role || account.role === role));
+  }
+  const result = await databasePool().query(
+    'SELECT id::text AS id, role, email, phone, password_salt AS salt, password_hash AS hash, created_at AS "createdAt" FROM users WHERE email = $1 AND ($2::text IS NULL OR role = $2)',
+    [email, role || null],
+  );
+  return result.rows[0];
+}
+async function saveAccount(account) {
+  if (usesFileAuthStore()) {
+    const existing = await fileUsers();
+    existing.push(account);
+    await saveUsers(existing);
+    return;
+  }
+  await databasePool().query(
+    'INSERT INTO users (id, role, email, phone, password_salt, password_hash, created_at) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+    [account.id, account.role, account.email, account.phone, account.salt, account.hash, account.createdAt],
+  );
+}
+async function findLoginAccount(identifier, role) {
+  const email = normalizeEmail(identifier);
+  if (EMAIL.test(email)) return findAccount(email, role);
+  const phone = role === 'seller' ? normalizePhone(identifier) : null;
+  if (!phone) return null;
+  if (usesFileAuthStore()) {
+    const matches = (await fileUsers()).filter(account => account.role === role && account.phone === phone);
+    return matches.length === 1 ? matches[0] : null;
+  }
+  const result = await databasePool().query(
+    'SELECT id::text AS id, role, email, phone, password_salt AS salt, password_hash AS hash, created_at AS "createdAt" FROM users WHERE role = $1 AND phone = $2',
+    [role, phone],
+  );
+  return result.rowCount === 1 ? result.rows[0] : null;
+}
+async function passwordHash(password, salt = randomBytes(16).toString('hex')) {
+  const derived = await scrypt(password, salt, 64);
+  return { salt, hash: derived.toString('hex') };
+}
+async function passwordMatches(password, account) {
+  const result = await passwordHash(password, account.salt);
+  return timingSafeEqual(Buffer.from(result.hash, 'hex'), Buffer.from(account.hash, 'hex'));
+}
+function publicAccount(account) {
+  return { id: account.id, role: account.role, email: account.email, phone: account.phone || null, createdAt: account.createdAt };
+}
 
 function send(res, status, data, contentType = 'application/json') {
   res.writeHead(status, { 'Content-Type': contentType, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
@@ -36,6 +114,31 @@ export async function handle(req, res) {
   try {
     if (req.method === 'GET' && path === '/api/health') return send(res, 200, { status: 'ok' });
     if (req.method === 'GET' && path === '/api/demo-seller') return send(res, 200, seller);
+    if (req.method === 'POST' && path === '/api/auth/register') {
+      const b = await body(req);
+      const role = b.role === 'seller' ? 'seller' : b.role === 'customer' ? 'customer' : null;
+      const email = normalizeEmail(b.email);
+      const password = String(b.password || '');
+      const phone = role === 'seller' ? normalizePhone(b.phone) : null;
+      if (!role || !EMAIL.test(email) || password.length < 8 || (role === 'seller' && !phone)) {
+        return fail(res, 400, 'INVALID_AUTH_INPUT', 'Enter a valid email, an 8-character password, and a valid Indian phone number for sellers');
+      }
+      if (await findAccount(email)) return fail(res, 409, 'ACCOUNT_EXISTS', 'An account already exists for this email');
+      const { salt, hash } = await passwordHash(password);
+      const account = { id: randomUUID(), role, email, phone, salt, hash, createdAt: new Date().toISOString() };
+      await saveAccount(account);
+      return send(res, 201, { account: publicAccount(account) });
+    }
+    if (req.method === 'POST' && path === '/api/auth/login') {
+      const b = await body(req);
+      const role = b.role === 'seller' ? 'seller' : b.role === 'customer' ? 'customer' : null;
+      const identifier = String(b.identifier || b.email || '').trim();
+      const password = String(b.password || '');
+      if (!role || (!EMAIL.test(identifier) && !(role === 'seller' && normalizePhone(identifier))) || !password) return fail(res, 400, 'INVALID_AUTH_INPUT', 'Enter a valid email or seller phone number and password');
+      const account = await findLoginAccount(identifier, role);
+      if (!account || !(await passwordMatches(password, account))) return fail(res, 401, 'INVALID_CREDENTIALS', 'Email, password, or account type is incorrect');
+      return send(res, 200, { account: publicAccount(account) });
+    }
     if (req.method === 'POST' && path === '/api/listing-photos') {
       const b = await body(req);
       if (b.sellerId !== seller.id || !text(b.clientPhotoId) || !['image/jpeg', 'image/png', 'image/webp'].includes(b.mimeType) || !text(b.base64)) return fail(res, 400, 'INVALID_INPUT', 'A valid seller, photo ID, image type and image data are required');

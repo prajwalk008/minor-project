@@ -25,6 +25,23 @@ To use the friend's service, set `TRANSPORT_API_BASE_URL` in the **server** term
 
 The seller area now has separate routes: **Dashboard** (`/seller`), **My products** (`/seller/inventory`), **Create listing** (`/seller/new`), **Saved drafts** (`/seller/drafts`), and **Order requests** (`/seller/orders`). The desktop view uses a sidebar; narrow screens use a scrollable navigation row. The dashboard counts and product/order cards come from the local demo API and saved drafts. Amazon Seller Central's dashboard and catalogue navigation informed the layout; branding and workflows are specific to this project.
 
+## Registration and login
+
+Marketplace browsing remains public. The **Register / Login** button opens the authentication page, where a visitor selects **Customer** or **Seller**, then chooses login or registration. Customer registration validates an email address and an eight-character password. Seller registration additionally validates an Indian mobile number. Login uses the selected role, email, and password.
+
+Registered accounts are stored in the configured Supabase PostgreSQL database. Passwords are stored as scrypt hashes, never as plain text. This is a demonstration credential flow only: it has no sessions, account recovery, rate limiting, or route authorization, and must not be deployed publicly as-is.
+
+## Database setup
+
+Create an ignored server environment file with DATABASE_URL set to the Supabase Session Pooler URI, then run this once after pulling the project:
+
+```powershell
+cd server
+npm run db:migrate
+```
+
+The migration records its own completion in the schema_migrations table, so re-running it is safe. Authentication now uses the users table. Listing, order, photo, and transport fixture data intentionally remain in memory for this sprint and will be migrated separately.
+
 ## Demo sequence
 
 1. Open Seller → **Create listing**. Stop the marketplace API. Fill the three steps and take/choose one photo. Save the draft. Reload the app; the draft and photo should remain under **Saved drafts**.
@@ -50,8 +67,8 @@ The API test covers idempotent photo/listing uploads, buyer withdrawal, duplicat
 
 ## Current boundaries
 
-- This is a **local demo**, not a deployed marketplace. Server state is in memory and resets on restart. Device-side drafts persist separately. The Android and browser interaction flow still needs a live device/browser check; CLI typecheck, lint, export, and API tests do not prove it works on a phone.
-- The seller and trip are fixtures. There is no real login, field-worker authorization, Aadhaar verification, RTO lookup, payment, booking, or delivery tracking.
+- This is a **local demo**, not a deployed marketplace. Marketplace state is in memory and resets on restart; registered accounts persist in Supabase PostgreSQL. Device-side drafts persist separately. The Android and browser interaction flow still needs a live device/browser check; CLI typecheck, lint, export, and API tests do not prove it works on a phone.
+- The seller and trip are fixtures. There is no field-worker authorization, Aadhaar verification, RTO lookup, payment, booking, or delivery tracking.
 - English and Hindi main UI labels are present. Server error text and some fixture text still appear in English. Halbi and Gondi options currently display **provisional Hindi fallback with an explicit warning**; native-speaker translations are required before a real pilot. Do not present them as completed translations.
 - Transport search uses sample coordinates and a sample result until the independent service is connected. Its phone number is intentionally fake. Do not describe the fixture distances as live routing measurements.
 - The local API uses permissive CORS and no authorization for demo work. Do not deploy it publicly in this state.

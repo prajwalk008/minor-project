@@ -7,6 +7,7 @@ import type { Listing } from '../types';
 import { Button, s } from '../ui';
 import type { Account } from '../api';
 import { AccountMenu } from '../AccountMenu';
+import { BuyerShell } from '../buyer/BuyerShell';
 
 type AppState = {
   account: Account | null;
@@ -41,6 +42,9 @@ export default function RootLayout() {
   };
   if (pathname.startsWith('/seller') || pathname === '/auth') {
     return <AppContext.Provider value={value}><Slot /></AppContext.Provider>;
+  }
+  if (pathname === '/' || pathname === '/transport' || pathname === '/profile') {
+    return <AppContext.Provider value={value}><BuyerShell><Slot /></BuyerShell></AppContext.Provider>;
   }
   return <AppContext.Provider value={value}>
     <ScrollView style={{ flex: 1, backgroundColor: '#f5f3ed' }} contentContainerStyle={s.page}>

@@ -20,7 +20,7 @@ export function SellerDashboard({ t }: { t: Translate }) {
   const mobile = screenWidth < 900;
   const metricWidth = mobile ? (screenWidth - 44) / 2 : undefined;
   const pending = requests.filter(item => item.status === 'pending');
-  const accepted = requests.filter(item => item.status === 'accepted');
+  const accepted = requests.filter(item => item.status === 'accepted' || item.status === 'completed');
   return <View>
     <PageHeader kicker={t('sellerHub')} title={firstName ? t('welcomeByName').replace('{name}', () => firstName) : t('welcomeSeller')} subtitle={t('welcomeSub')}
       action={<View style={st.row}>

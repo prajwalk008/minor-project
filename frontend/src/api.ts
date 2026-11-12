@@ -1,4 +1,4 @@
-import type { Draft, Listing, Match, OrderRequest } from './types';
+import type { Draft, Listing, Match, OrderRequest, ProductReview, ReviewImage, PublicSeller } from './types';
 import type { Key } from './i18n';
 import { photoBase64 } from './photoStore';
 
@@ -12,6 +12,7 @@ export function displayError(e: unknown, t: (key: Key) => string): string {
       TRANSPORT_UNAVAILABLE: 'transportUnavailable',
       INVALID_AUTH_INPUT: 'invalidAuthInput', ACCOUNT_EXISTS: 'accountExists',
       INVALID_NAME: 'invalidName',
+      PURCHASE_REQUIRED: 'reviewPurchaseRequired', REVIEW_EXISTS: 'reviewExists', INVALID_REVIEW: 'reviewInvalid',
       INVALID_CREDENTIALS: 'invalidCredentials',
     };
     return t(codes[e.code] || 'error');
@@ -32,6 +33,11 @@ export async function publishDraft(d: Draft, token: string): Promise<Listing> {
   return json<Listing>('/api/listings', 'POST', { ...d.fields, clientDraftId: d.localId, photoId: photo.photoId }, token);
 }
 export async function getListings(q = '') { return (await json<{ listings: Listing[] }>(`/api/listings?q=${encodeURIComponent(q)}`)).listings; }
+export async function getListing(id: string) { return json<Listing>(`/api/listings/${encodeURIComponent(id)}`); }
+export async function getPublicSeller(id: string) { return json<{ seller: PublicSeller; listings: Listing[] }>(`/api/sellers/${encodeURIComponent(id)}`); }
+export async function getReviews(id: string) { return (await json<{ reviews: ProductReview[] }>(`/api/listings/${encodeURIComponent(id)}/reviews`)).reviews; }
+export async function getReviewEligibility(id: string, token: string) { return json<{ purchased: boolean; reviewed: boolean }>(`/api/listings/${encodeURIComponent(id)}/reviews/eligibility`, 'GET', undefined, token); }
+export async function publishReview(id: string, input: { rating: number; body: string; images: ReviewImage[] }, token: string) { return json<{ status: string }>(`/api/listings/${encodeURIComponent(id)}/reviews`, 'POST', input, token); }
 export async function getSellerRequests(sellerId: string, token: string) { return (await json<{ requests: OrderRequest[] }>(`/api/sellers/${encodeURIComponent(sellerId)}/requests`, 'GET', undefined, token)).requests; }
 export async function getBuyerRequests(token: string) { return (await json<{ requests: OrderRequest[] }>('/api/buyers/me/requests', 'GET', undefined, token)).requests; }
 export async function createRequest(input: { listingId: string; buyerName: string; buyerPhone: string; quantity: number }, token: string) { return json<OrderRequest>('/api/requests', 'POST', input, token); }

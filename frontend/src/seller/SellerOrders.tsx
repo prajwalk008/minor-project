@@ -55,7 +55,7 @@ function OrderCard({ order, title, t, changed }: { order: OrderRequest; title: s
         <Action label={t('decline')} onPress={() => act('decline')} disabled={busy} secondary />
       </View>
     </>}
-    {order.status === 'accepted' && <Text style={[st.muted, { marginTop: 12 }]}>{t('acceptedTerms')}: ₹{order.acceptedTotalPriceRupees}</Text>}
+    {(order.status === 'accepted' || order.status === 'completed') && <Text style={[st.muted, { marginTop: 12 }]}>{t('acceptedTerms')}: ₹{order.acceptedTotalPriceRupees}</Text>}
   </View>;
 }
 export function SellerOrders({ t }: { t: Translate }) {

@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { createHash } from 'node:crypto';
+import { createHash, randomUUID } from 'node:crypto';
 import { createServer } from './index.js';
 
 function createTestSessionStore() {
@@ -35,7 +35,31 @@ function createTestMarketplaceStore() {
   const listings = new Map();
   const photos = new Map();
   const requests = new Map();
+  const reviews = new Map();
+  const reviewImages = new Map();
   return {
+    async getProductSummaries(ids) {
+      return ids.map(id => {
+        const items = [...reviews.values()].filter(item => item.listingId === id);
+        return { id, sellerName: 'Test seller', averageRating: items.length ? items.reduce((sum, item) => sum + item.rating, 0) / items.length : null, reviewCount: items.length,
+          unitsSold: [...requests.values()].filter(item => item.listingId === id && item.status === 'completed').reduce((sum, item) => sum + item.acceptedQuantity, 0) };
+      });
+    },
+    async getProductReviews(listingId) {
+      return [...reviews.values()].filter(item => item.listingId === listingId).map(({ id, rating, body, imageUrls, createdAt }) => ({ id, rating, body, imageUrls, createdAt, buyerName: 'Test buyer' }));
+    },
+    async getReviewEligibility(listingId, buyerId) {
+      return { purchased: [...requests.values()].some(item => item.listingId === listingId && item.buyerId === buyerId && item.status === 'completed'),
+        reviewed: [...reviews.values()].some(item => item.listingId === listingId && item.buyerId === buyerId) };
+    },
+    async createProductReview(review) {
+      const eligible = await this.getReviewEligibility(review.listingId, review.buyerId);
+      if (!eligible.purchased) { const error = new Error(); error.code = 'PURCHASE_REQUIRED'; throw error; }
+      if (eligible.reviewed) { const error = new Error(); error.code = '23505'; throw error; }
+      const imageUrls = review.images.map(image => { reviewImages.set(image.id, { imageData: image.bytes, mimeType: image.mimeType }); return `/api/review-images/${image.id}`; });
+      reviews.set(review.id, { ...review, imageUrls, createdAt: new Date().toISOString() });
+    },
+    async findReviewImage(id) { return reviewImages.get(id); },
     async createListingPhoto(photo) {
       const existing = [...photos.values()].find(item =>
         item.sellerId === photo.sellerId && item.clientPhotoId === photo.clientPhotoId,
@@ -232,6 +256,89 @@ test('photo and listing retries are idempotent; withdrawn and accepted orders ob
     if (previousAuthDataFile === undefined) delete process.env.AUTH_DATA_FILE;
     else process.env.AUTH_DATA_FILE = previousAuthDataFile;
     await rm(testDirectory, { recursive: true, force: true });
+  }
+});
+
+test('product pages expose public seller data; received purchases unlock one text-and-image review', async () => {
+  const directory = await mkdtemp(join(tmpdir(), 'marketplace-products-'));
+  const previousFile = process.env.AUTH_DATA_FILE;
+  process.env.AUTH_DATA_FILE = join(directory, 'users.json');
+  const store = createTestMarketplaceStore();
+  const app = createServer(createTestSessionStore(), store);
+  await new Promise(resolve => app.listen(0, '127.0.0.1', resolve));
+  const base = `http://127.0.0.1:${app.address().port}`;
+  const call = async (path, method = 'GET', payload, token) => {
+    const response = await fetch(base + path, { method, headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) }, body: payload ? JSON.stringify(payload) : undefined });
+    return { status: response.status, data: await response.json() };
+  };
+  try {
+    const register = async (role, name) => (await call('/api/auth/register', 'POST', { role, email: `${name}@example.com`, firstName: name, lastName: 'Test', password: 'password1', ...(role === 'seller' ? { phone: '9876543210' } : {}) })).data;
+    const seller = await register('seller', 'Artisan');
+    const buyer = await register('customer', 'Buyer');
+    const stranger = await register('customer', 'Stranger');
+    const photo = await call('/api/listing-photos', 'POST', { clientPhotoId: 'product-photo', mimeType: 'image/png', base64: 'iVBORw0KGgo=' }, seller.token);
+    const product = await call('/api/listings', 'POST', { clientDraftId: 'product', photoId: photo.data.photoId, title: 'Handmade bowl', category: 'handicraft', description: '', quantity: 4, unit: 'piece', unitPriceRupees: 250, estimatedWeightKgPerUnit: 1, packageLengthCmPerUnit: 10, packageWidthCmPerUnit: 10, packageHeightCmPerUnit: 10 }, seller.token);
+    assert.equal(product.status, 201);
+    const id = product.data.id;
+    const reviewPath = `/api/listings/${id}/reviews`;
+    assert.deepEqual((await call(reviewPath)).data.reviews, []);
+    const initial = (await call(`/api/listings/${id}`)).data;
+    assert.equal(initial.averageRating, null);
+    assert.equal(initial.unitsSold, 0);
+    const profile = await call(`/api/sellers/${seller.account.id}`);
+    assert.equal(profile.data.seller.name, 'Artisan Test');
+    assert.equal(profile.data.seller.phone, undefined);
+    assert.equal(profile.data.seller.email, undefined);
+    assert.equal(profile.data.seller.hash, undefined);
+    assert.equal(profile.data.listings.length, 1);
+    assert.equal((await call(`/api/sellers/${buyer.account.id}`)).status, 404);
+    assert.equal((await call(`/api/sellers/${randomUUID()}`)).status, 404);
+    const review = { rating: 4, body: 'Well made, arrived in good condition.', images: [{ mimeType: 'image/png', base64: 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5ioAAAAASUVORK5CYII=' }] };
+    assert.equal((await call(reviewPath, 'POST', review)).status, 401);
+    assert.equal((await call(reviewPath, 'POST', review, seller.token)).status, 403);
+    assert.equal((await call(reviewPath, 'POST', review, stranger.token)).status, 403);
+    assert.equal((await call(reviewPath + '/eligibility', 'GET', undefined, buyer.token)).data.purchased, false);
+    const requestPayload = { listingId: id, buyerName: 'Ignored spoof', buyerPhone: '9876543211', quantity: 2 };
+    assert.equal((await call('/api/requests', 'POST', { ...requestPayload, quantity: 1.5 }, buyer.token)).status, 400);
+    const order = (await call('/api/requests', 'POST', requestPayload, buyer.token)).data;
+    assert.equal(order.sellerPhone, '+919876543210');
+    const statusPath = `/api/requests/${order.id}/status`;
+    assert.equal((await call(statusPath, 'PATCH', { action: 'complete' }, buyer.token)).status, 409);
+    assert.equal((await call(statusPath, 'PATCH', { action: 'accept', exactQuantity: 2, unitPriceRupees: 250, totalPriceRupees: 500 }, seller.token)).status, 200);
+    assert.equal((await call(reviewPath, 'POST', review, buyer.token)).status, 403);
+    assert.equal((await call(statusPath, 'PATCH', { action: 'complete' }, stranger.token)).status, 404);
+    assert.equal((await call(statusPath, 'PATCH', { action: 'complete' }, seller.token)).status, 404);
+    const completed = await call(statusPath, 'PATCH', { action: 'complete' }, buyer.token);
+    assert.equal(completed.data.status, 'completed');
+    assert.equal(completed.data.acceptedTotalPriceRupees, 500);
+    assert.equal((await call(statusPath, 'PATCH', { action: 'complete' }, buyer.token)).status, 409);
+    assert.equal((await call(`/api/listings/${id}`)).data.availableQuantity, 2);
+    assert.equal((await call(`/api/listings/${id}`)).data.unitsSold, 2);
+    assert.equal((await call(reviewPath, 'POST', { ...review, rating: 6 }, buyer.token)).status, 400);
+    assert.equal((await call(reviewPath, 'POST', { ...review, body: ' ' }, buyer.token)).status, 400);
+    assert.equal((await call(reviewPath, 'POST', { ...review, body: 'a'.repeat(2001) }, buyer.token)).status, 400);
+    assert.equal((await call(reviewPath, 'POST', { ...review, images: Array(4).fill(review.images[0]) }, buyer.token)).status, 400);
+    assert.equal((await call(reviewPath, 'POST', { ...review, images: [{ mimeType: 'image/png', base64: Buffer.from('<svg>fake</svg>').toString('base64') }] }, buyer.token)).status, 400);
+    assert.equal((await call(reviewPath, 'POST', { ...review, images: [{ ...review.images[0], mimeType: 'image/jpeg' }] }, buyer.token)).status, 400);
+    assert.equal((await call(reviewPath, 'POST', { ...review, images: [{ mimeType: 'image/png', base64: 'A'.repeat(1_333_340) }] }, buyer.token)).status, 400);
+    assert.equal((await call(reviewPath, 'POST', review, buyer.token)).status, 201);
+    assert.equal((await call(reviewPath, 'POST', review, buyer.token)).status, 409);
+    const publicReviews = (await call(reviewPath)).data.reviews;
+    assert.equal(publicReviews.length, 1);
+    assert.equal(publicReviews[0].buyerId, undefined);
+    assert.equal(publicReviews[0].body, review.body);
+    assert.equal(publicReviews[0].imageUrls.length, 1);
+    const image = await fetch(base + publicReviews[0].imageUrls[0]);
+    assert.equal(image.headers.get('content-type'), 'image/png');
+    assert.deepEqual(Buffer.from(await image.arrayBuffer()), Buffer.from(review.images[0].base64, 'base64'));
+    const summary = (await call(`/api/listings/${id}`)).data;
+    assert.equal(summary.averageRating, 4);
+    assert.equal(summary.reviewCount, 1);
+    assert.deepEqual((await call(reviewPath + '/eligibility', 'GET', undefined, buyer.token)).data, { purchased: true, reviewed: true });
+  } finally {
+    await new Promise(resolve => app.close(resolve));
+    if (previousFile === undefined) delete process.env.AUTH_DATA_FILE; else process.env.AUTH_DATA_FILE = previousFile;
+    await rm(directory, { recursive: true, force: true });
   }
 });
 

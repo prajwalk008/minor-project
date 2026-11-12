@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import { displayError, loginAccount, registerAccount, type Account, type AuthSession } from './api';
 import type { Key } from './i18n';
@@ -11,6 +11,7 @@ type Mode = 'login' | 'register';
 type Props = { t: (key: Key) => string; onSignIn: (session: AuthSession) => void };
 
 export function AuthScreen({ t, onSignIn }: Props) {
+  const { productId } = useLocalSearchParams<{ productId?: string }>();
   const [role, setRole] = useState<Role>('customer');
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
@@ -43,7 +44,8 @@ export function AuthScreen({ t, onSignIn }: Props) {
         : await loginAccount({ role, identifier: cleanEmail, password });
       onSignIn(response);
       setMessage(t('authSuccess') + ' ' + response.account.email);
-      router.replace(isSeller ? '/seller' : '/buyer');
+      if (!isSeller && productId) router.replace({ pathname: '/product/[id]', params: { id: productId } });
+      else router.replace(isSeller ? '/seller' : '/buyer');
     } catch (error) {
       setMessage(displayError(error, t));
     } finally {

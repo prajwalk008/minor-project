@@ -1,12 +1,10 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import '../global.css';
 import { Slot, router, usePathname } from 'expo-router';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
-import { dictionaries, en, localeLabels, type Key, type Locale } from '../i18n';
+import { ActivityIndicator, Text, View } from 'react-native';
+import { dictionaries, en, type Key, type Locale } from '../i18n';
 import type { Listing } from '../types';
-import { Button, s } from '../ui';
 import { logoutAccount, type Account, type AuthSession } from '../api';
-import { AccountMenu } from '../AccountMenu';
 import { BuyerShell } from '../buyer/BuyerShell';
 
 type AppState = {
@@ -67,26 +65,11 @@ export default function RootLayout() {
       </View>
     </AppContext.Provider>;
   }
-  if (pathname.startsWith('/seller') || pathname === '/auth') {
+  if (pathname === '/seller' || pathname.startsWith('/seller/') || pathname === '/auth') {
     return <AppContext.Provider value={value}><Slot /></AppContext.Provider>;
   }
-  if (pathname === '/buyer' || pathname === '/buyer/requests' || pathname.startsWith('/buyer/request/') || pathname === '/browse' || pathname === '/transport' || pathname === '/profile') {
+  if (pathname === '/buyer' || pathname === '/buyer/requests' || pathname.startsWith('/buyer/request/') || pathname.startsWith('/product/') || pathname.startsWith('/sellers/') || pathname === '/browse' || pathname === '/transport' || pathname === '/profile') {
     return <AppContext.Provider value={value}><BuyerShell><Slot /></BuyerShell></AppContext.Provider>;
   }
-  return <AppContext.Provider value={value}>
-    <ScrollView style={{ flex: 1, backgroundColor: '#f5f3ed' }} contentContainerStyle={s.page}>
-      <View style={s.pageHeader}><View><Text style={s.title}>{t('title')}</Text><Text style={s.muted}>{t('demo')}</Text></View>
-        <AccountMenu account={value.account} logOut={value.logOut} t={t} />
-      </View>
-      <View style={s.row}>{(Object.keys(localeLabels) as Locale[]).map(l =>
-        <Button key={l} label={localeLabels[l]} onPress={() => setLocale(l)} secondary={locale !== l} />)}</View>
-      {(locale === 'hlb' || locale === 'gon') && <Text style={{ backgroundColor: '#fff0c2', padding: 10 }}>{t('provisional')}</Text>}
-      <View style={s.row}>
-        <Button label={t('seller')} onPress={() => router.navigate('/seller')} secondary={pathname !== '/seller'} />
-        <Button label={t('home')} onPress={() => router.navigate('/')} secondary={pathname !== '/'} />
-        <Button label={t('transport')} onPress={() => router.navigate('/transport')} secondary={pathname !== '/transport'} />
-      </View>
-      <Slot />
-    </ScrollView>
-  </AppContext.Provider>;
+  return <AppContext.Provider value={value}><Slot /></AppContext.Provider>;
 }

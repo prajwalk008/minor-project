@@ -98,7 +98,7 @@ export function SellerListingForm({ t }: { t: Translate }) {
         <Choice label={t('categoryCraft')} selected={form.category === 'handicraft'} onPress={() => update('category', 'handicraft')} />
         <Choice label={t('categoryIndustry')} selected={form.category === 'small_industry'} onPress={() => update('category', 'small_industry')} />
       </View>
-      <FormField label={t('description')} value={form.description} onChange={value => update('description', value)} multiline wide />
+      <FormField label={t('productInformationOptional')} value={form.description} onChange={value => update('description', value)} multiline wide />
       <FormField label={t('village')} value={form.village} onChange={value => update('village', value)} wide />
     </View>}
     {step === 1 && <>

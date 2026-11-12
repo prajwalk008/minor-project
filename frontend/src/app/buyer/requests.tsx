@@ -13,6 +13,7 @@ const filters: { key: StatusFilter; label: Key }[] = [
   { key: 'all', label: 'requestsFilterAll' },
   { key: 'pending', label: 'pending' },
   { key: 'accepted', label: 'accepted' },
+  { key: 'completed', label: 'completed' },
   { key: 'declined', label: 'declined' },
   { key: 'withdrawn', label: 'withdrawn' },
 ];
@@ -133,7 +134,7 @@ export default function BuyerRequestsRoute() {
                   {dateText && <Text style={s.productDetail}>{t('requestDateLabel')}: {dateText}</Text>}
                   <Text style={[s.productDetail, { fontWeight: '700' }]}>{t('viewRequestDetails')} →</Text>
                 </Pressable>
-                {request.status === 'accepted' && request.acceptedTotalPriceRupees !== undefined && (
+                {(request.status === 'accepted' || request.status === 'completed') && request.acceptedTotalPriceRupees !== undefined && (
                   <Text style={s.productDetail}>{t('acceptedTotalLabel')}: <Money value={request.acceptedTotalPriceRupees} /></Text>
                 )}
                 {!!withdrawErrors[request.id] && (

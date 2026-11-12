@@ -4,6 +4,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { promisify } from 'node:util';
+import * as productStore from './products.js';
 import {
   acceptRequestAndDecrementStock,
   createSessionRecord,
@@ -120,6 +121,7 @@ const databaseSessionStore = {
   revokeById: revokeSessionById,
 };
 const databaseMarketplaceStore = {
+  ...productStore,
   createListing,
   createListingPhoto,
   createBuyerRequest,
@@ -180,6 +182,22 @@ function positive(n) { return typeof n === 'number' && Number.isFinite(n) && n >
 function text(v) { return typeof v === 'string' && v.trim().length > 0; }
 function uuid(v) { return typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v); }
 function publicListing(l) { return { ...l, imageUrl: l.photoId ? `/api/photos/${l.photoId}` : null }; }
+async function enrichedListings(items, store) {
+  const summaries = await store.getProductSummaries(items.map(item => item.id));
+  const byId = new Map(summaries.map(item => [item.id, item]));
+  return items.map(item => ({ ...publicListing(item), ...byId.get(item.id) }));
+}
+// Decode only supported raster image signatures. Reject forged MIME types and malformed base64.
+function reviewImage(input) {
+  if (!input || typeof input.base64 !== 'string' || input.base64.length > 1_333_336 ||
+      !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(input.base64)) return null;
+  const bytes = Buffer.from(input.base64, 'base64');
+  if (!bytes.length || bytes.length > 1_000_000) return null;
+  const mimeType = bytes.subarray(0, 8).equals(Buffer.from([137,80,78,71,13,10,26,10])) ? 'image/png'
+    : bytes[0] === 255 && bytes[1] === 216 && bytes[2] === 255 ? 'image/jpeg'
+    : bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WEBP' ? 'image/webp' : null;
+  return mimeType && mimeType === input.mimeType ? { id: randomUUID(), mimeType, bytes } : null;
+}
 function publicRequest(request) {
   const visibleRequest = { ...request };
   delete visibleRequest.buyerId;
@@ -213,6 +231,48 @@ export async function handle(req, res, sessionStore = databaseSessionStore, mark
   try {
     if (req.method === 'GET' && path === '/api/health') return send(res, 200, { status: 'ok' });
     if (req.method === 'GET' && path === '/api/demo-seller') return send(res, 200, seller);
+    const publicSeller = path.match(/^\/api\/sellers\/([^/]+)$/);
+    if (req.method === 'GET' && publicSeller) {
+      if (!uuid(publicSeller[1])) return fail(res, 404, 'NOT_FOUND', 'Seller not found');
+      const account = await findAccountById(publicSeller[1]);
+      if (!account || account.role !== 'seller') return fail(res, 404, 'NOT_FOUND', 'Seller not found');
+      const items = (await marketplaceStore.findListingsBySeller(account.id)).filter(item => item.status === 'active');
+      return send(res, 200, { seller: { id: account.id, name: [account.firstName, account.lastName].filter(Boolean).join(' ') || 'Seller', joinedAt: account.createdAt }, listings: await enrichedListings(items, marketplaceStore) });
+    }
+    const reviewsRoute = path.match(/^\/api\/listings\/([^/]+)\/reviews(\/eligibility)?$/);
+    if (reviewsRoute) {
+      const listingId = reviewsRoute[1];
+      if (!uuid(listingId) || !await marketplaceStore.findListingById(listingId)) return fail(res, 404, 'NOT_FOUND', 'Product not found');
+      if (req.method === 'GET' && !reviewsRoute[2]) return send(res, 200, { reviews: await marketplaceStore.getProductReviews(listingId) });
+      if ((req.method === 'GET' && reviewsRoute[2]) || (req.method === 'POST' && !reviewsRoute[2])) {
+        const account = await requireAuthenticatedAccount(req, res, sessionStore);
+        if (!account) return;
+        if (account.role !== 'customer') return fail(res, 403, 'FORBIDDEN', 'A customer account is required');
+        const eligibility = await marketplaceStore.getReviewEligibility(listingId, account.id);
+        if (req.method === 'GET') return send(res, 200, eligibility);
+        if (!eligibility.purchased) return fail(res, 403, 'PURCHASE_REQUIRED', 'Confirm receipt of your purchase before reviewing');
+        if (eligibility.reviewed) return fail(res, 409, 'REVIEW_EXISTS', 'You already reviewed this product');
+        const b = await body(req);
+        const uploads = b.images ?? [];
+        if (!Number.isInteger(b.rating) || b.rating < 1 || b.rating > 5 || typeof b.body !== 'string' || !b.body.trim() || b.body.trim().length > 2000 || !Array.isArray(uploads) || uploads.length > 3) return fail(res, 400, 'INVALID_REVIEW', 'A rating, 1–2000 characters and at most three images are required');
+        const images = uploads.map(reviewImage);
+        if (images.some(image => !image)) return fail(res, 400, 'INVALID_IMAGE', 'Use JPEG, PNG or WebP images up to 1 MB each');
+        try {
+          await marketplaceStore.createProductReview({ id: randomUUID(), listingId, buyerId: account.id, rating: b.rating, body: b.body.trim(), images });
+        } catch (error) {
+          if (error.code === '23505') return fail(res, 409, 'REVIEW_EXISTS', 'You already reviewed this product');
+          if (error.code === 'PURCHASE_REQUIRED') return fail(res, 403, 'PURCHASE_REQUIRED', 'Purchase required');
+          throw error;
+        }
+        return send(res, 201, { status: 'ok' });
+      }
+    }
+    const reviewPhoto = path.match(/^\/api\/review-images\/([^/]+)$/);
+    if (req.method === 'GET' && reviewPhoto) {
+      const image = uuid(reviewPhoto[1]) ? await marketplaceStore.findReviewImage(reviewPhoto[1]) : null;
+      if (!image) return fail(res, 404, 'NOT_FOUND', 'Image not found');
+      return send(res, 200, image.imageData, image.mimeType);
+    }
     if (req.method === 'POST' && path === '/api/auth/register') {
       if (!authStorageConfigured(sessionStore)) return fail(res, 503, 'AUTH_STORAGE_CONFIGURATION', 'AUTH_DATA_FILE is not supported with PostgreSQL-backed sessions; unset it to use database-backed authentication');
       const b = await body(req);
@@ -315,13 +375,13 @@ export async function handle(req, res, sessionStore = databaseSessionStore, mark
     }
     if (req.method === 'GET' && path === '/api/listings') {
       const q = url.searchParams.get('q') || '';
-      return send(res, 200, { listings: (await marketplaceStore.findActiveListings(q)).map(publicListing) });
+      return send(res, 200, { listings: await enrichedListings(await marketplaceStore.findActiveListings(q), marketplaceStore) });
     }
     const listingMatch = path.match(/^\/api\/listings\/([^/]+)$/);
     if (req.method === 'GET' && listingMatch) {
       if (!uuid(listingMatch[1])) return fail(res, 404, 'NOT_FOUND', 'Listing not found');
       const l = await marketplaceStore.findListingById(listingMatch[1]);
-      return l ? send(res, 200, publicListing(l)) : fail(res, 404, 'NOT_FOUND', 'Listing not found');
+      return l ? send(res, 200, (await enrichedListings([l], marketplaceStore))[0]) : fail(res, 404, 'NOT_FOUND', 'Listing not found');
     }
     if (req.method === 'POST' && path === '/api/requests') {
       const account = await requireAuthenticatedAccount(req, res, sessionStore);
@@ -329,7 +389,7 @@ export async function handle(req, res, sessionStore = databaseSessionStore, mark
       if (account.role !== 'customer') return fail(res, 403, 'FORBIDDEN', 'A customer account is required');
       const b = await body(req);
       const l = uuid(b.listingId) ? await marketplaceStore.findListingById(b.listingId) : null;
-      if (!l || l.status !== 'active' || !text(b.buyerName) || !/^\+?[0-9]{10,15}$/.test(String(b.buyerPhone || '')) || !positive(b.quantity) || b.quantity > l.availableQuantity) return fail(res, 400, 'INVALID_INPUT', 'Valid listing, buyer and available quantity are required');
+      if (!l || l.status !== 'active' || !text(b.buyerName) || !/^\+?[0-9]{10,15}$/.test(String(b.buyerPhone || '')) || !positive(b.quantity) || b.quantity > l.availableQuantity || (l.unit === 'piece' && !Number.isInteger(b.quantity))) return fail(res, 400, 'INVALID_INPUT', 'Valid listing, buyer and available quantity are required');
       const accountName = [account.firstName, account.lastName].filter(Boolean).join(' ').trim();
       const r = await marketplaceStore.createBuyerRequest({
         id: randomUUID(),
@@ -339,7 +399,7 @@ export async function handle(req, res, sessionStore = databaseSessionStore, mark
         productName: l.title,
         buyerName: accountName || b.buyerName.trim(),
         buyerPhone: b.buyerPhone,
-        sellerPhone: seller.phone,
+        sellerPhone: (await findAccountById(l.sellerId))?.phone || seller.phone,
         quantity: b.quantity,
         unit: l.unit,
         requestedUnitPriceRupees: l.unitPriceRupees,
@@ -383,6 +443,17 @@ export async function handle(req, res, sessionStore = databaseSessionStore, mark
       const r = await marketplaceStore.findRequestById(statusMatch[1]);
       if (!r) return fail(res, 404, 'NOT_FOUND', 'Request not found');
       const b = await body(req);
+      if (b.action === 'complete') {
+        if (account.role !== 'customer' || r.buyerId !== account.id) return fail(res, 404, 'NOT_FOUND', 'Request not found');
+        if (r.status !== 'accepted') return fail(res, 409, 'INVALID_STATE', 'Only an accepted order can be confirmed received');
+        const completed = await marketplaceStore.updateRequestStatus(r.id, {
+          status: 'completed', expectedStatus: 'accepted', buyerId: account.id,
+          acceptedQuantity: r.acceptedQuantity, acceptedUnitPriceRupees: r.acceptedUnitPriceRupees,
+          acceptedTotalPriceRupees: r.acceptedTotalPriceRupees,
+        });
+        if (!completed) return fail(res, 409, 'INVALID_STATE', 'Order has already changed');
+        return send(res, 200, publicRequest(completed));
+      }
       if (!['accept', 'decline', 'withdraw'].includes(b.action)) return fail(res, 400, 'INVALID_INPUT', 'Unknown action');
       const isBuyerWithdrawal = b.action === 'withdraw' && account.role === 'customer' && r.buyerId === account.id;
       const isSellerDecision = (b.action === 'accept' || b.action === 'decline') && account.role === 'seller' && r.sellerId === account.id;

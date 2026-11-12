@@ -31,6 +31,7 @@ export function LandingScreen({ t, locale, setLocale }: Props) {
 
   return (
     <ScrollView style={styles.page} contentContainerStyle={styles.pageContent}>
+      {(locale === 'hlb' || locale === 'gon') && <Text style={{ padding: 12, backgroundColor: '#FFF2D6', textAlign: 'center' }}>{t('provisional')}</Text>}
       <View style={styles.navbar}>
         <Pressable accessibilityRole="link" onPress={() => router.replace('/')} style={styles.brand}>
           <View style={styles.brandMark}><Text style={styles.brandMarkText}>M</Text></View>

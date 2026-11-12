@@ -87,7 +87,7 @@ export default function BuyerRequestDetailsRoute() {
   };
 
   const callSeller = async () => {
-    if (!sellerPhone || request?.status !== 'accepted' || busy) return;
+    if (!sellerPhone || !request || !['accepted', 'completed'].includes(request.status) || busy) return;
     setBusy(true);
     setActionError('');
     try {
@@ -100,6 +100,13 @@ export default function BuyerRequestDetailsRoute() {
   };
 
   const browseProducts = () => router.navigate('/browse');
+  const confirmReceived = async () => {
+    if (!request || request.status !== 'accepted' || busy) return;
+    setBusy(true); setActionError('');
+    try { setRequest(await setRequestStatus(request.id, { action: 'complete' }, token)); }
+    catch (e) { setActionError(displayError(e, t)); }
+    finally { setBusy(false); }
+  };
 
   return (
     <View>
@@ -148,7 +155,7 @@ export default function BuyerRequestDetailsRoute() {
             <Text style={s.productDetail}>
               {t('requestedPriceLabel')}: <Money value={request.requestedUnitPriceRupees} /> / {request.unit}
             </Text>
-            {request.status === 'accepted' && (
+            {(request.status === 'accepted' || request.status === 'completed') && (
               <View style={{ marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: '#E4EAF0' }}>
                 <Text style={s.formLabel}>{t('acceptedTerms')}</Text>
                 {request.acceptedQuantity !== undefined && (
@@ -176,7 +183,9 @@ export default function BuyerRequestDetailsRoute() {
             </View>
             <View style={{ marginTop: 18 }}>
               <Text style={s.requestKicker}>
-                {request.status === 'accepted'
+                {request.status === 'completed'
+                  ? `● ${t('completed')}`
+                  : request.status === 'accepted'
                   ? `● ${t('sellerAccepted')}`
                   : request.status === 'declined'
                     ? `● ${t('sellerDeclined')}`
@@ -205,7 +214,7 @@ export default function BuyerRequestDetailsRoute() {
 
           <View style={s.requestCard}>
             <Text style={s.requestTitle}>{t('buyerActionsTitle')}</Text>
-            {request.status === 'accepted' && sellerPhone && (
+            {(request.status === 'accepted' || request.status === 'completed') && sellerPhone && (
               <View style={[s.formCard, { marginTop: 14 }]}>
                 <Text style={s.formLabel}>{t('sellerContact')}</Text>
                 <Text style={s.requestTitle}>{sellerPhone}</Text>
@@ -219,6 +228,11 @@ export default function BuyerRequestDetailsRoute() {
               </View>
             )}
             <View style={s.productActions}>
+              {request.status === 'accepted' && <View style={{ gap: 12, width: '100%', marginBottom: 14 }}>
+                <Text style={s.productDetail}>{t('confirmReceivedHelp')}</Text>
+                <Action label={busy ? t('pleaseWait') : t('confirmReceived')} onPress={() => void confirmReceived()} disabled={busy} />
+              </View>}
+              {request.status === 'completed' && <Action label={t('writeReview')} onPress={() => router.push({ pathname: '/product/[id]', params: { id: request.listingId } })} />}
               {request.status === 'pending' && (
                 <Action
                   label={busy ? t('pleaseWait') : t('withdrawRequest')}

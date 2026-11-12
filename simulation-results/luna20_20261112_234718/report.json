@@ -1,0 +1,2760 @@
+{
+  "runId": "luna20_20261112_234718",
+  "schema": "sim_luna20_20261112_234718",
+  "model": "gpt-6-luna",
+  "execution": "20 separate Codex Luna subagents, API interaction",
+  "apiUrl": "http://127.0.0.1:4001",
+  "transportUrl": "http://127.0.0.1:4101",
+  "uiUrl": "http://localhost:8082",
+  "createdAt": "2026-11-12T18:20:48.551Z",
+  "retained": true,
+  "placeholderProductImages": true,
+  "reportedAt": "2026-11-12T18:31:23.165Z",
+  "scope": "Real API workflows against isolated PostgreSQL; not a visual UI test, booking or real payment.",
+  "counts": {
+    "actors": 20,
+    "sellers": 10,
+    "buyers": 10,
+    "listings": 30,
+    "orders": 20,
+    "accepted": 20,
+    "declined": 0,
+    "pending": 0,
+    "transportSearches": 20,
+    "searchesWithMatches": 10,
+    "searchesWithoutMatches": 10,
+    "apiRequests": 241,
+    "failedApiRequests": 3
+  },
+  "latencyMs": {
+    "median": 134,
+    "p95": 325,
+    "max": 494
+  },
+  "stockConsistent": true,
+  "stock": [
+    {
+      "id": "0101ef47-c863-4895-bd66-bd302f80ba91",
+      "title": "[SIM] Iron Wall-Mounted Utility Hook Set",
+      "originalQuantity": 40,
+      "availableQuantity": 40,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+      "title": "[SIM] Red Carrots",
+      "originalQuantity": 60,
+      "availableQuantity": 54,
+      "committedQuantity": 6,
+      "consistent": true
+    },
+    {
+      "id": "9d347cc8-f049-4f35-b5b4-7462fa58c30d",
+      "title": "[SIM] Fresh Cauliflower",
+      "originalQuantity": 55,
+      "availableQuantity": 55,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "8bb79e27-8c36-41df-ac28-9836df78866c",
+      "title": "[SIM] Fresh Green Peas",
+      "originalQuantity": 70,
+      "availableQuantity": 70,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "a723e17a-fd93-433c-bcbe-cda5c914f11b",
+      "title": "[SIM] Sal Leaf Serving Bowl Set",
+      "originalQuantity": 40,
+      "availableQuantity": 38,
+      "committedQuantity": 2,
+      "consistent": true
+    },
+    {
+      "id": "7f24bd70-2cbc-4d37-b518-731f0e1e79c7",
+      "title": "[SIM] Handmade Clay Water Pitcher",
+      "originalQuantity": 40,
+      "availableQuantity": 40,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "0f03b916-9b9c-4164-b846-aafcd0cd86f7",
+      "title": "[SIM] Handwoven Cotton Floor Duster",
+      "originalQuantity": 40,
+      "availableQuantity": 40,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "c33e7f93-a80c-43a1-9216-4698a8479a3a",
+      "title": "[SIM] Sal Wood Kitchen Serving Tray",
+      "originalQuantity": 24,
+      "availableQuantity": 23,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "1ea35549-85de-4e49-a4a7-6b73d997be7a",
+      "title": "[SIM] Hand-Forged Garden Hoe",
+      "originalQuantity": 35,
+      "availableQuantity": 34,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "5f9b8d34-3ceb-4531-adff-ee1ffd66a529",
+      "title": "[SIM] Kulthi Horse Gram",
+      "originalQuantity": 55,
+      "availableQuantity": 50,
+      "committedQuantity": 5,
+      "consistent": true
+    },
+    {
+      "id": "3cba8044-7bfb-4095-ac9c-7cd9f1ecc661",
+      "title": "[SIM] Little Millet Grain",
+      "originalQuantity": 65,
+      "availableQuantity": 64,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "04346d6b-90f9-4e6e-a5dd-c04c6819319f",
+      "title": "[SIM] Kodo Millet Grain",
+      "originalQuantity": 80,
+      "availableQuantity": 79,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "c3edc05e-9edb-4833-ac18-14d7f0577c1a",
+      "title": "[SIM] Handcrafted Terracotta Serving Bowl",
+      "originalQuantity": 30,
+      "availableQuantity": 28,
+      "committedQuantity": 2,
+      "consistent": true
+    },
+    {
+      "id": "4a03369d-2735-4226-9fb3-94b30a2876a6",
+      "title": "[SIM] Terracotta Diya Set of Six",
+      "originalQuantity": 40,
+      "availableQuantity": 39,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "cad04256-bcec-4c8b-9716-4ae3041228d0",
+      "title": "[SIM] Hand-Thrown Terracotta Water Matka",
+      "originalQuantity": 24,
+      "availableQuantity": 24,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "c765fa89-8e45-41f0-a98f-a0c099f83f94",
+      "title": "[SIM] Woven Cotton Cushion Cover Pair",
+      "originalQuantity": 24,
+      "availableQuantity": 24,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "8614aa78-0f8f-48f6-b588-f450413db3e3",
+      "title": "[SIM] Handwoven Cotton Table Runner",
+      "originalQuantity": 36,
+      "availableQuantity": 35,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "c64f58bd-19d7-4c04-9585-804997dc3bd2",
+      "title": "[SIM] Kosa Silk Stole with Woven Border",
+      "originalQuantity": 30,
+      "availableQuantity": 29,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "1b90d0f1-2368-4166-bad8-a9063f5d55f4",
+      "title": "[SIM] Wild Forest Black Pepper",
+      "originalQuantity": 30,
+      "availableQuantity": 30,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "94a37334-ddd6-4ae6-a2d9-f449647f7113",
+      "title": "[SIM] Wild Forest Tamarind Pulp",
+      "originalQuantity": 45,
+      "availableQuantity": 45,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "8ab5ce51-792e-4d45-aa85-a79317425be0",
+      "title": "[SIM] Kondagaon Forest Mahua Flowers",
+      "originalQuantity": 60,
+      "availableQuantity": 60,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "0491e1b6-47a8-406d-adf9-34cad4f87987",
+      "title": "[SIM] Bamboo Table Place Mat Pair",
+      "originalQuantity": 36,
+      "availableQuantity": 36,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+      "title": "[SIM] Bamboo Kitchen Utensil Holder",
+      "originalQuantity": 30,
+      "availableQuantity": 28,
+      "committedQuantity": 2,
+      "consistent": true
+    },
+    {
+      "id": "91d70884-4f35-480f-a8b4-e813d3ac55ee",
+      "title": "[SIM] Handwoven Bamboo Storage Basket",
+      "originalQuantity": 24,
+      "availableQuantity": 23,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+      "title": "[SIM] Whole Green Moong Beans",
+      "originalQuantity": 72,
+      "availableQuantity": 64,
+      "committedQuantity": 8,
+      "consistent": true
+    },
+    {
+      "id": "0fad337d-24a8-42a3-bdf5-d1c8c14df2dd",
+      "title": "[SIM] Red Amaranth Leaves",
+      "originalQuantity": 48,
+      "availableQuantity": 48,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "78bbd79e-c333-4b70-be5d-6d85de5a9702",
+      "title": "[SIM] Fresh Kondagaon Turmeric Root",
+      "originalQuantity": 65,
+      "availableQuantity": 65,
+      "committedQuantity": 0,
+      "consistent": true
+    },
+    {
+      "id": "52c0503c-4f10-483f-8bcb-b959c253e4ac",
+      "title": "[SIM] Bamboo and Cane Storage Basket",
+      "originalQuantity": 30,
+      "availableQuantity": 29,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "54d928e6-d1c9-4e0c-b145-156a5ec39c59",
+      "title": "[SIM] Bell Metal Tribal Dance Figurine",
+      "originalQuantity": 18,
+      "availableQuantity": 17,
+      "committedQuantity": 1,
+      "consistent": true
+    },
+    {
+      "id": "7b1001dc-5067-46bd-bbdd-555c61266bf7",
+      "title": "[SIM] Handwoven Kosa Silk Table Runner",
+      "originalQuantity": 24,
+      "availableQuantity": 24,
+      "committedQuantity": 0,
+      "consistent": true
+    }
+  ],
+  "actors": [
+    {
+      "actor": "buyer01",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Ananya Verma",
+      "email": "luna20_20261112_234718.buyer01@example.invalid",
+      "accountId": "4987ed95-f3fb-4789-af3e-3ad178acdcaa",
+      "plan": {
+        "name": "Ananya Verma",
+        "rationale": "Raipur household buyer seeking useful local food and home goods while supporting different local sellers within a Rs1800 budget for two purchases.",
+        "orders": [
+          {
+            "listingId": "5f9b8d34-3ceb-4531-adff-ee1ffd66a529",
+            "quantity": 5,
+            "destination": "Raipur",
+            "rationale": "Five kilograms of local kulthi horse gram make a nutritious, practical pantry staple."
+          },
+          {
+            "listingId": "c33e7f93-a80c-43a1-9216-4698a8479a3a",
+            "quantity": 1,
+            "destination": "Raipur",
+            "rationale": "A locally made sal wood serving tray is a durable, useful household item from a different seller."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "0cd0c929-ab62-407c-8757-f6ba11cdf873",
+          "listingId": "5f9b8d34-3ceb-4531-adff-ee1ffd66a529",
+          "productName": "[SIM] Kulthi Horse Gram",
+          "quantity": 5
+        },
+        {
+          "id": "a635180b-a380-41e6-a96d-990f69ef6794",
+          "listingId": "c33e7f93-a80c-43a1-9216-4698a8479a3a",
+          "productName": "[SIM] Sal Wood Kitchen Serving Tray",
+          "quantity": 1
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "Five kilograms of local kulthi horse gram make a nutritious, practical pantry staple."
+        },
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "A locally made sal wood serving tray is a durable, useful household item from a different seller."
+        }
+      ]
+    },
+    {
+      "actor": "buyer02",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Asha Verma",
+      "email": "luna20_20261112_234718.buyer02@example.invalid",
+      "accountId": "d750c96b-5acb-41eb-9214-c40a634d3309",
+      "plan": {
+        "name": "Asha Verma",
+        "rationale": "Buy affordable family staples from two different Raipur-area sellers, balancing vegetables with protein-rich pulses while staying well within the Rs1200 budget.",
+        "orders": [
+          {
+            "listingId": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+            "quantity": 5,
+            "destination": "Raipur",
+            "rationale": "Five kilograms of carrots provide a versatile vegetable for several family meals at a low price."
+          },
+          {
+            "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+            "quantity": 4,
+            "destination": "Raipur",
+            "rationale": "Four kilograms of green moong add filling protein for family meals, from a different seller."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "23caf989-63e3-4cb3-9615-0463dd35adf9",
+          "listingId": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+          "productName": "[SIM] Red Carrots",
+          "quantity": 5
+        },
+        {
+          "id": "300afb5a-2e35-43a9-91dd-85cc89870868",
+          "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+          "productName": "[SIM] Whole Green Moong Beans",
+          "quantity": 4
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "Five kilograms of carrots provide a versatile vegetable for several family meals at a low price."
+        },
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "Four kilograms of green moong add filling protein for family meals, from a different seller."
+        }
+      ]
+    },
+    {
+      "actor": "buyer03",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Aarav Deshmukh",
+      "email": "luna20_20261112_234718.buyer03@example.invalid",
+      "accountId": "cffaf7fa-9ade-414a-9d21-3fd6d427fe91",
+      "plan": {
+        "name": "Aarav Deshmukh",
+        "rationale": "I am putting together two locally made housewarming gifts for friends in Raipur, with a total budget of Rs3500.",
+        "orders": [
+          {
+            "listingId": "54d928e6-d1c9-4e0c-b145-156a5ec39c59",
+            "quantity": 1,
+            "destination": "Raipur",
+            "rationale": "The bell metal tribal dance figurine is a distinctive handcrafted keepsake and a substantial centerpiece gift."
+          },
+          {
+            "listingId": "c64f58bd-19d7-4c04-9585-804997dc3bd2",
+            "quantity": 1,
+            "destination": "Raipur",
+            "rationale": "The Kosa silk stole is a useful, locally crafted gift with a woven border; it pairs well with the figurine."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "ccc0eff2-3379-4420-aea8-695a510c196b",
+          "listingId": "54d928e6-d1c9-4e0c-b145-156a5ec39c59",
+          "productName": "[SIM] Bell Metal Tribal Dance Figurine",
+          "quantity": 1
+        },
+        {
+          "id": "2be4b91d-2e2b-4ce8-90f0-bc5d301db7cd",
+          "listingId": "c64f58bd-19d7-4c04-9585-804997dc3bd2",
+          "productName": "[SIM] Kosa Silk Stole with Woven Border",
+          "quantity": 1
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "The bell metal tribal dance figurine is a distinctive handcrafted keepsake and a substantial centerpiece gift."
+        },
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "The Kosa silk stole is a useful, locally crafted gift with a woven border; it pairs well with the figurine."
+        }
+      ]
+    },
+    {
+      "actor": "buyer04",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Maya Verma",
+      "email": "luna20_20261112_234718.buyer04@example.invalid",
+      "accountId": "189fdff2-dac3-499c-b0ae-9e7b6ff36a93",
+      "plan": {
+        "name": "Maya Verma",
+        "rationale": "Outfitting a Raipur household with useful kitchen storage and durable serving pieces while keeping well within the Rs1600 budget.",
+        "orders": [
+          {
+            "listingId": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+            "quantity": 1,
+            "destination": "Raipur",
+            "rationale": "A bamboo utensil holder keeps everyday cooking tools organized and accessible."
+          },
+          {
+            "listingId": "a723e17a-fd93-433c-bcbe-cda5c914f11b",
+            "quantity": 2,
+            "destination": "Raipur",
+            "rationale": "Two sets of sal leaf bowls provide practical serving ware for family meals and guests."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "73b18763-5cbf-4555-8903-099bacf4c018",
+          "listingId": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+          "productName": "[SIM] Bamboo Kitchen Utensil Holder",
+          "quantity": 1
+        },
+        {
+          "id": "7b6d6824-689e-4ef2-b162-67fd6df7d44f",
+          "listingId": "a723e17a-fd93-433c-bcbe-cda5c914f11b",
+          "productName": "[SIM] Sal Leaf Serving Bowl Set",
+          "quantity": 2
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "A bamboo utensil holder keeps everyday cooking tools organized and accessible."
+        },
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "Two sets of sal leaf bowls provide practical serving ware for family meals and guests."
+        }
+      ]
+    },
+    {
+      "actor": "buyer05",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Mira Patel",
+      "email": "luna20_20261112_234718.buyer05@example.invalid",
+      "accountId": "d6c52acf-12ab-4b23-8b48-101d383e670f",
+      "plan": {
+        "name": "Mira Patel",
+        "rationale": "A small cafe needs local grains for a rotating lunch special and serving bowls for dine-in presentation. One kilogram of kodo millet plus two terracotta bowls costs Rs 575, within the Rs 2500 budget.",
+        "orders": [
+          {
+            "listingId": "04346d6b-90f9-4e6e-a5dd-c04c6819319f",
+            "quantity": 1,
+            "destination": "Raipur",
+            "rationale": "Kodo millet is a locally sourced grain for a cafe lunch special."
+          },
+          {
+            "listingId": "c3edc05e-9edb-4833-ac18-14d7f0577c1a",
+            "quantity": 2,
+            "destination": "Raipur",
+            "rationale": "Terracotta bowls provide durable, locally crafted presentation for dine-in service."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "c61193af-ef5d-4cac-9e73-fa53c48c6313",
+          "listingId": "04346d6b-90f9-4e6e-a5dd-c04c6819319f",
+          "productName": "[SIM] Kodo Millet Grain",
+          "quantity": 1
+        },
+        {
+          "id": "9f80aca2-9dc8-4059-bfe0-b66d59b19539",
+          "listingId": "c3edc05e-9edb-4833-ac18-14d7f0577c1a",
+          "productName": "[SIM] Handcrafted Terracotta Serving Bowl",
+          "quantity": 2
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "Kodo millet is a locally sourced grain for a cafe lunch special."
+        },
+        {
+          "destination": "Raipur",
+          "matchCount": 2,
+          "rationale": "Terracotta bowls provide durable, locally crafted presentation for dine-in service."
+        }
+      ]
+    },
+    {
+      "actor": "buyer06",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Asha Verma",
+      "email": "luna20_20261112_234718.buyer06@example.invalid",
+      "accountId": "f26ae416-2165-481d-99ae-bdc2152464cc",
+      "plan": {
+        "name": "Asha Verma",
+        "rationale": "A Raipur household buyer seeking a staple pulse and a practical storage basket from two different sellers; both requests fit the Rs1300 budget.",
+        "orders": [
+          {
+            "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+            "quantity": 2,
+            "destination": "Raipur",
+            "pickupRadiusKm": 5,
+            "dropRadiusKm": 10,
+            "rationale": "Two kilograms of whole green moong for home cooking, total Rs236."
+          },
+          {
+            "listingId": "91d70884-4f35-480f-a8b4-e813d3ac55ee",
+            "quantity": 1,
+            "destination": "Raipur",
+            "pickupRadiusKm": 5,
+            "dropRadiusKm": 10,
+            "rationale": "One handwoven bamboo basket for household storage, Rs280."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "9f1d4e3d-a3cd-4160-ae76-8aab6cc20d59",
+          "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+          "productName": "[SIM] Whole Green Moong Beans",
+          "quantity": 2
+        },
+        {
+          "id": "345b032e-e093-4457-874a-3e0f1394943c",
+          "listingId": "91d70884-4f35-480f-a8b4-e813d3ac55ee",
+          "productName": "[SIM] Handwoven Bamboo Storage Basket",
+          "quantity": 1
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Raipur",
+          "matchCount": 0,
+          "rationale": "Two kilograms of whole green moong for home cooking, total Rs236."
+        },
+        {
+          "destination": "Raipur",
+          "matchCount": 0,
+          "rationale": "One handwoven bamboo basket for household storage, Rs280."
+        }
+      ]
+    },
+    {
+      "actor": "buyer07",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Synthetic First Last",
+      "email": "luna20_20261112_234718.buyer07@example.invalid",
+      "accountId": "30513016-44a6-48ad-bcb1-91846d167143",
+      "plan": {
+        "name": "Synthetic First Last",
+        "rationale": "A Jagdalpur household stocking staple pulses and useful local kitchenware, spending Rs 398 of the Rs 1400 budget across two sellers.",
+        "orders": [
+          {
+            "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+            "quantity": 2,
+            "destination": "Jagdalpur",
+            "rationale": "Two kilograms of whole green moong beans for household meals at Rs 118 per kg."
+          },
+          {
+            "listingId": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+            "quantity": 1,
+            "destination": "Jagdalpur",
+            "rationale": "A bamboo kitchen utensil holder for everyday kitchen organization at Rs 190."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "e9b5065f-6793-4878-8fa7-47863fc55d53",
+          "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+          "productName": "[SIM] Whole Green Moong Beans",
+          "quantity": 2
+        },
+        {
+          "id": "e7ab759f-74ef-4f9e-aa59-d1fc7787f621",
+          "listingId": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+          "productName": "[SIM] Bamboo Kitchen Utensil Holder",
+          "quantity": 1
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "Two kilograms of whole green moong beans for household meals at Rs 118 per kg."
+        },
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "A bamboo kitchen utensil holder for everyday kitchen organization at Rs 190."
+        }
+      ]
+    },
+    {
+      "actor": "buyer08",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Maya Verma",
+      "email": "luna20_20261112_234718.buyer08@example.invalid",
+      "accountId": "7e93d743-f50c-4399-8026-c63f3817127d",
+      "plan": {
+        "name": "Maya Verma",
+        "rationale": "Decorate my Jagdalpur home with locally made terracotta accents and woven cotton textiles for a total of Rs 1,060.",
+        "orders": [
+          {
+            "listingId": "4a03369d-2735-4226-9fb3-94b30a2876a6",
+            "quantity": 1,
+            "destination": "Jagdalpur",
+            "rationale": "A handmade terracotta diya set adds warm traditional light to my living room."
+          },
+          {
+            "listingId": "8614aa78-0f8f-48f6-b588-f450413db3e3",
+            "quantity": 1,
+            "destination": "Jagdalpur",
+            "rationale": "A handwoven cotton table runner brings a local textile accent to my dining table."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "27e3641b-d667-4a04-8340-0611d26d6d7d",
+          "listingId": "4a03369d-2735-4226-9fb3-94b30a2876a6",
+          "productName": "[SIM] Terracotta Diya Set of Six",
+          "quantity": 1
+        },
+        {
+          "id": "0ac7cc51-a464-444b-a0fd-c123d8d4cfab",
+          "listingId": "8614aa78-0f8f-48f6-b588-f450413db3e3",
+          "productName": "[SIM] Handwoven Cotton Table Runner",
+          "quantity": 1
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "A handmade terracotta diya set adds warm traditional light to my living room."
+        },
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "A handwoven cotton table runner brings a local textile accent to my dining table."
+        }
+      ]
+    },
+    {
+      "actor": "buyer09",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Maya Sahu",
+      "email": "luna20_20261112_234718.buyer09@example.invalid",
+      "accountId": "a7c82a1a-5522-4826-bade-e7d0e0a12c5d",
+      "plan": {
+        "name": "Maya Sahu",
+        "rationale": "As a Jagdalpur household gardener, I need a durable hoe and a practical basket for garden supplies. The two items total ₹700 within my ₹1,800 budget.",
+        "orders": [
+          {
+            "listingId": "1ea35549-85de-4e49-a4a7-6b73d997be7a",
+            "quantity": 1,
+            "destination": "Jagdalpur",
+            "rationale": "A hand-forged hoe for preparing beds and weeding the household garden."
+          },
+          {
+            "listingId": "52c0503c-4f10-483f-8bcb-b959c253e4ac",
+            "quantity": 1,
+            "destination": "Jagdalpur",
+            "rationale": "A bamboo and cane basket to carry harvested vegetables and gardening supplies."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "1021fce8-d11d-4cc8-872e-31dc38edf450",
+          "listingId": "1ea35549-85de-4e49-a4a7-6b73d997be7a",
+          "productName": "[SIM] Hand-Forged Garden Hoe",
+          "quantity": 1
+        },
+        {
+          "id": "1fe36d67-61a2-4892-8ac0-8cc57c30fa56",
+          "listingId": "52c0503c-4f10-483f-8bcb-b959c253e4ac",
+          "productName": "[SIM] Bamboo and Cane Storage Basket",
+          "quantity": 1
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "A hand-forged hoe for preparing beds and weeding the household garden."
+        },
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "A bamboo and cane basket to carry harvested vegetables and gardening supplies."
+        }
+      ]
+    },
+    {
+      "actor": "buyer10",
+      "role": "customer",
+      "model": "gpt-6-luna",
+      "name": "Mina Sahu",
+      "email": "luna20_20261112_234718.buyer10@example.invalid",
+      "accountId": "57531e2f-585b-4fc3-ad9a-890860239da0",
+      "plan": {
+        "name": "Mina Sahu",
+        "rationale": "A budget-conscious Jagdalpur household wants fresh vegetables and a filling local grain from two different sellers. One kilogram each costs Rs150 in total, leaving room within the Rs1000 budget.",
+        "orders": [
+          {
+            "listingId": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+            "quantity": 1,
+            "destination": "Jagdalpur",
+            "rationale": "One kilogram of affordable red carrots for everyday meals."
+          },
+          {
+            "listingId": "3cba8044-7bfb-4095-ac9c-7cd9f1ecc661",
+            "quantity": 1,
+            "destination": "Jagdalpur",
+            "rationale": "One kilogram of nutritious local little millet as a household staple."
+          }
+        ]
+      },
+      "listings": [],
+      "orders": [
+        {
+          "id": "9caabd9a-1dc5-42ca-8f9e-b2d90af5d300",
+          "listingId": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+          "productName": "[SIM] Red Carrots",
+          "quantity": 1
+        },
+        {
+          "id": "6334d7b3-70a0-40b9-a4bf-7aa8e72a17f8",
+          "listingId": "3cba8044-7bfb-4095-ac9c-7cd9f1ecc661",
+          "productName": "[SIM] Little Millet Grain",
+          "quantity": 1
+        }
+      ],
+      "sellerDecisions": [],
+      "transportSearches": [
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "One kilogram of affordable red carrots for everyday meals."
+        },
+        {
+          "destination": "Jagdalpur",
+          "matchCount": 0,
+          "rationale": "One kilogram of nutritious local little millet as a household staple."
+        }
+      ]
+    },
+    {
+      "actor": "seller01",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Mira Netam",
+      "email": "luna20_20261112_234718.seller01@example.invalid",
+      "accountId": "ba761d57-4880-451c-bb41-c6b917d5c8c3",
+      "plan": {
+        "name": "Mira Netam",
+        "rationale": "A synthetic Kondagaon artisan seller offering locally plausible Bastar-style crafts in distinct materials and price ranges.",
+        "products": [
+          {
+            "title": "Handwoven Kosa Silk Table Runner",
+            "category": "handicraft",
+            "description": "A handwoven golden-toned Kosa silk table runner with a restrained traditional border, made by a Kondagaon-area artisan.",
+            "quantity": 24,
+            "unit": "piece",
+            "unitPriceRupees": 1450,
+            "estimatedWeightKgPerUnit": 0.35,
+            "packageLengthCmPerUnit": 38,
+            "packageWidthCmPerUnit": 12,
+            "packageHeightCmPerUnit": 6
+          },
+          {
+            "title": "Bell Metal Tribal Dance Figurine",
+            "category": "handicraft",
+            "description": "A small hand-cast bell metal figurine depicting a traditional group dance, finished with a natural dark patina.",
+            "quantity": 18,
+            "unit": "piece",
+            "unitPriceRupees": 2100,
+            "estimatedWeightKgPerUnit": 1.2,
+            "packageLengthCmPerUnit": 20,
+            "packageWidthCmPerUnit": 14,
+            "packageHeightCmPerUnit": 24
+          },
+          {
+            "title": "Bamboo and Cane Storage Basket",
+            "category": "handicraft",
+            "description": "A sturdy handwoven bamboo and cane basket with a fitted lid, suitable for storing household items or dry goods.",
+            "quantity": 30,
+            "unit": "piece",
+            "unitPriceRupees": 780,
+            "estimatedWeightKgPerUnit": 0.8,
+            "packageLengthCmPerUnit": 32,
+            "packageWidthCmPerUnit": 32,
+            "packageHeightCmPerUnit": 26
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "7b1001dc-5067-46bd-bbdd-555c61266bf7",
+          "title": "[SIM] Handwoven Kosa Silk Table Runner"
+        },
+        {
+          "index": 1,
+          "id": "54d928e6-d1c9-4e0c-b145-156a5ec39c59",
+          "title": "[SIM] Bell Metal Tribal Dance Figurine"
+        },
+        {
+          "index": 2,
+          "id": "52c0503c-4f10-483f-8bcb-b959c253e4ac",
+          "title": "[SIM] Bamboo and Cane Storage Basket"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "1fe36d67-61a2-4892-8ac0-8cc57c30fa56",
+          "action": "accept",
+          "rationale": "The request is for one basket at the listed price of 780 rupees, within the available stock of 30 pieces."
+        },
+        {
+          "id": "ccc0eff2-3379-4420-aea8-695a510c196b",
+          "action": "accept",
+          "rationale": "The request is for one figurine at the listed price of 2100 rupees, within the available stock of 18 pieces."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller02",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Sukhram Markam",
+      "email": "luna20_20261112_234718.seller02@example.invalid",
+      "accountId": "903db5b0-0545-48e8-8767-7205923e8d7e",
+      "plan": {
+        "name": "Sukhram Markam",
+        "rationale": "A synthetic Kondagaon smallholder farmer selling fresh, locally familiar vegetables and pulses grown on a mixed family plot.",
+        "products": [
+          {
+            "title": "Fresh Kondagaon Turmeric Root",
+            "category": "produce",
+            "description": "Freshly harvested, aromatic turmeric fingers from a small Kondagaon farm, cleaned of loose soil and sold in bulk.",
+            "quantity": 65,
+            "unit": "kg",
+            "unitPriceRupees": 95,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          },
+          {
+            "title": "Red Amaranth Leaves",
+            "category": "produce",
+            "description": "Tender red amaranth greens harvested in the morning from a family vegetable plot, suitable for fresh cooking.",
+            "quantity": 48,
+            "unit": "kg",
+            "unitPriceRupees": 42,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          },
+          {
+            "title": "Whole Green Moong Beans",
+            "category": "produce",
+            "description": "Naturally dried whole green moong beans from a small local harvest, sorted and ready for household cooking.",
+            "quantity": 72,
+            "unit": "kg",
+            "unitPriceRupees": 118,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "78bbd79e-c333-4b70-be5d-6d85de5a9702",
+          "title": "[SIM] Fresh Kondagaon Turmeric Root"
+        },
+        {
+          "index": 1,
+          "id": "0fad337d-24a8-42a3-bdf5-d1c8c14df2dd",
+          "title": "[SIM] Red Amaranth Leaves"
+        },
+        {
+          "index": 2,
+          "id": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+          "title": "[SIM] Whole Green Moong Beans"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "e9b5065f-6793-4878-8fa7-47863fc55d53",
+          "action": "accept",
+          "rationale": "The requested 2 kg is within the 72 kg listed stock and the requested unit price matches the listing price of ₹118/kg."
+        },
+        {
+          "id": "9f1d4e3d-a3cd-4160-ae76-8aab6cc20d59",
+          "action": "accept",
+          "rationale": "The requested 2 kg is within the 72 kg listed stock and the requested unit price matches the listing price of ₹118/kg."
+        },
+        {
+          "id": "300afb5a-2e35-43a9-91dd-85cc89870868",
+          "action": "accept",
+          "rationale": "The requested 4 kg is within the 72 kg listed stock and the requested unit price matches the listing price of ₹118/kg."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller03",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Madhav Netam",
+      "email": "luna20_20261112_234718.seller03@example.invalid",
+      "accountId": "b70ec9f3-d268-4df4-a4fa-eb6489c92dce",
+      "plan": {
+        "name": "Madhav Netam",
+        "rationale": "A small Kondagaon workshop that turns locally sourced bamboo and forest-friendly materials into durable, practical household goods for everyday use.",
+        "products": [
+          {
+            "title": "Handwoven Bamboo Storage Basket",
+            "category": "small_industry",
+            "description": "Sturdy handwoven bamboo basket for storing vegetables, laundry, or household supplies; made by a small Kondagaon workshop.",
+            "quantity": 24,
+            "unit": "piece",
+            "unitPriceRupees": 280,
+            "estimatedWeightKgPerUnit": 0.65,
+            "packageLengthCmPerUnit": 32,
+            "packageWidthCmPerUnit": 28,
+            "packageHeightCmPerUnit": 18
+          },
+          {
+            "title": "Bamboo Kitchen Utensil Holder",
+            "category": "small_industry",
+            "description": "Compact split-bamboo holder for spoons, ladles, and spatulas, with a smooth rim and open weave for ventilation.",
+            "quantity": 30,
+            "unit": "piece",
+            "unitPriceRupees": 190,
+            "estimatedWeightKgPerUnit": 0.35,
+            "packageLengthCmPerUnit": 18,
+            "packageWidthCmPerUnit": 18,
+            "packageHeightCmPerUnit": 22
+          },
+          {
+            "title": "Bamboo Table Place Mat Pair",
+            "category": "small_industry",
+            "description": "Pair of tightly woven bamboo place mats that protect dining tables from hot plates and everyday spills.",
+            "quantity": 36,
+            "unit": "piece",
+            "unitPriceRupees": 160,
+            "estimatedWeightKgPerUnit": 0.3,
+            "packageLengthCmPerUnit": 32,
+            "packageWidthCmPerUnit": 22,
+            "packageHeightCmPerUnit": 3
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "91d70884-4f35-480f-a8b4-e813d3ac55ee",
+          "title": "[SIM] Handwoven Bamboo Storage Basket"
+        },
+        {
+          "index": 1,
+          "id": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+          "title": "[SIM] Bamboo Kitchen Utensil Holder"
+        },
+        {
+          "index": 2,
+          "id": "0491e1b6-47a8-406d-adf9-34cad4f87987",
+          "title": "[SIM] Bamboo Table Place Mat Pair"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "e7ab759f-74ef-4f9e-aa59-d1fc7787f621",
+          "action": "accept",
+          "rationale": "One utensil holder is in stock, and the requested unit price matches the listed price of ₹190."
+        },
+        {
+          "id": "345b032e-e093-4457-874a-3e0f1394943c",
+          "action": "accept",
+          "rationale": "One storage basket is in stock, and the requested unit price matches the listed price of ₹280."
+        },
+        {
+          "id": "73b18763-5cbf-4555-8903-099bacf4c018",
+          "action": "accept",
+          "rationale": "One utensil holder is in stock, and the requested unit price matches the listed price of ₹190."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller04",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Mina Markam",
+      "email": "luna20_20261112_234718.seller04@example.invalid",
+      "accountId": "0b9d7fd8-1257-4d40-a630-0f32336e8da2",
+      "plan": {
+        "name": "Mina Markam",
+        "rationale": "A Kondagaon forest produce seller offering locally gathered, shelf-stable foods and spices in practical household packs.",
+        "products": [
+          {
+            "title": "Kondagaon Forest Mahua Flowers",
+            "category": "produce",
+            "description": "Carefully cleaned and sun-dried mahua flowers gathered from local forest areas, suitable for traditional recipes and brewing.",
+            "quantity": 60,
+            "unit": "kg",
+            "unitPriceRupees": 180,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 24,
+            "packageWidthCmPerUnit": 18,
+            "packageHeightCmPerUnit": 10
+          },
+          {
+            "title": "Wild Forest Tamarind Pulp",
+            "category": "produce",
+            "description": "Tangy tamarind pulp prepared from forest-grown pods, packed for everyday chutneys, curries, and sauces.",
+            "quantity": 45,
+            "unit": "kg",
+            "unitPriceRupees": 140,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 20,
+            "packageWidthCmPerUnit": 16,
+            "packageHeightCmPerUnit": 9
+          },
+          {
+            "title": "Wild Forest Black Pepper",
+            "category": "produce",
+            "description": "Aromatic whole black pepper collected from forest vines and dried in small batches for fresh, bold seasoning.",
+            "quantity": 30,
+            "unit": "kg",
+            "unitPriceRupees": 520,
+            "estimatedWeightKgPerUnit": 0.5,
+            "packageLengthCmPerUnit": 14,
+            "packageWidthCmPerUnit": 10,
+            "packageHeightCmPerUnit": 7
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "8ab5ce51-792e-4d45-aa85-a79317425be0",
+          "title": "[SIM] Kondagaon Forest Mahua Flowers"
+        },
+        {
+          "index": 1,
+          "id": "94a37334-ddd6-4ae6-a2d9-f449647f7113",
+          "title": "[SIM] Wild Forest Tamarind Pulp"
+        },
+        {
+          "index": 2,
+          "id": "1b90d0f1-2368-4166-bad8-a9063f5d55f4",
+          "title": "[SIM] Wild Forest Black Pepper"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller05",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Mina Netam",
+      "email": "luna20_20261112_234718.seller05@example.invalid",
+      "accountId": "ba8abd09-7e9a-4d61-8f37-b5e4768748ff",
+      "plan": {
+        "name": "Mina Netam",
+        "rationale": "A Kondagaon textile artisan offering practical handwoven pieces rooted in local craft traditions.",
+        "products": [
+          {
+            "title": "Kosa Silk Stole with Woven Border",
+            "category": "handicraft",
+            "description": "A lightweight kosa silk stole woven by hand with a restrained geometric border, suitable for festive wear or gifting.",
+            "quantity": 30,
+            "unit": "piece",
+            "unitPriceRupees": 1450,
+            "estimatedWeightKgPerUnit": 0.24,
+            "packageLengthCmPerUnit": 32,
+            "packageWidthCmPerUnit": 24,
+            "packageHeightCmPerUnit": 4
+          },
+          {
+            "title": "Handwoven Cotton Table Runner",
+            "category": "handicraft",
+            "description": "A durable cotton table runner with a naturally inspired stripe pattern, woven on a traditional handloom.",
+            "quantity": 36,
+            "unit": "piece",
+            "unitPriceRupees": 680,
+            "estimatedWeightKgPerUnit": 0.42,
+            "packageLengthCmPerUnit": 38,
+            "packageWidthCmPerUnit": 26,
+            "packageHeightCmPerUnit": 5
+          },
+          {
+            "title": "Woven Cotton Cushion Cover Pair",
+            "category": "handicraft",
+            "description": "A pair of textured cotton cushion covers featuring traditional woven checks and sturdy envelope closures.",
+            "quantity": 24,
+            "unit": "piece",
+            "unitPriceRupees": 920,
+            "estimatedWeightKgPerUnit": 0.58,
+            "packageLengthCmPerUnit": 34,
+            "packageWidthCmPerUnit": 30,
+            "packageHeightCmPerUnit": 6
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "c64f58bd-19d7-4c04-9585-804997dc3bd2",
+          "title": "[SIM] Kosa Silk Stole with Woven Border"
+        },
+        {
+          "index": 1,
+          "id": "8614aa78-0f8f-48f6-b588-f450413db3e3",
+          "title": "[SIM] Handwoven Cotton Table Runner"
+        },
+        {
+          "index": 2,
+          "id": "c765fa89-8e45-41f0-a98f-a0c099f83f94",
+          "title": "[SIM] Woven Cotton Cushion Cover Pair"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "0ac7cc51-a464-444b-a0fd-c123d8d4cfab",
+          "action": "accept",
+          "rationale": "One table runner is available from the original quantity of 36, and the requested price matches the listed price of 680 rupees."
+        },
+        {
+          "id": "2be4b91d-2e2b-4ce8-90f0-bc5d301db7cd",
+          "action": "accept",
+          "rationale": "One kosa silk stole is available from the original quantity of 30, and the requested price matches the listed price of 1450 rupees."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller06",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Ramesh Netam",
+      "email": "luna20_20261112_234718.seller06@example.invalid",
+      "accountId": "8b47d025-e866-471e-8627-8c4ce13040e0",
+      "plan": {
+        "name": "Ramesh Netam",
+        "rationale": "A Kondagaon artisan making durable terracotta kitchenware and small traditional decor pieces by hand.",
+        "products": [
+          {
+            "title": "Hand-Thrown Terracotta Water Matka",
+            "category": "handicraft",
+            "description": "Porous, hand-thrown clay water pot fired in a traditional kiln to keep drinking water naturally cool. Each piece has a fitted clay lid.",
+            "quantity": 24,
+            "unit": "piece",
+            "unitPriceRupees": 380,
+            "estimatedWeightKgPerUnit": 2.2,
+            "packageLengthCmPerUnit": 28,
+            "packageWidthCmPerUnit": 28,
+            "packageHeightCmPerUnit": 34
+          },
+          {
+            "title": "Terracotta Diya Set of Six",
+            "category": "handicraft",
+            "description": "Six small wheel-shaped earthen lamps, hand-moulded and kiln-fired for festive lighting and daily puja use.",
+            "quantity": 40,
+            "unit": "piece",
+            "unitPriceRupees": 160,
+            "estimatedWeightKgPerUnit": 0.45,
+            "packageLengthCmPerUnit": 18,
+            "packageWidthCmPerUnit": 14,
+            "packageHeightCmPerUnit": 8
+          },
+          {
+            "title": "Handcrafted Terracotta Serving Bowl",
+            "category": "handicraft",
+            "description": "A broad, food-safe clay bowl shaped by hand and fired for serving rice, snacks, or curries. Its earthy finish is left unglazed.",
+            "quantity": 30,
+            "unit": "piece",
+            "unitPriceRupees": 240,
+            "estimatedWeightKgPerUnit": 0.9,
+            "packageLengthCmPerUnit": 22,
+            "packageWidthCmPerUnit": 22,
+            "packageHeightCmPerUnit": 12
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "cad04256-bcec-4c8b-9716-4ae3041228d0",
+          "title": "[SIM] Hand-Thrown Terracotta Water Matka"
+        },
+        {
+          "index": 1,
+          "id": "4a03369d-2735-4226-9fb3-94b30a2876a6",
+          "title": "[SIM] Terracotta Diya Set of Six"
+        },
+        {
+          "index": 2,
+          "id": "c3edc05e-9edb-4833-ac18-14d7f0577c1a",
+          "title": "[SIM] Handcrafted Terracotta Serving Bowl"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "27e3641b-d667-4a04-8340-0611d26d6d7d",
+          "action": "accept",
+          "rationale": "One diya set is in stock, and the request matches the listed price of ₹160 per set."
+        },
+        {
+          "id": "9f80aca2-9dc8-4059-bfe0-b66d59b19539",
+          "action": "accept",
+          "rationale": "Two serving bowls are within the listed stock of 30, and the request matches the listed price of ₹240 per bowl."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller07",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Ravi Markam",
+      "email": "luna20_20261112_234718.seller07@example.invalid",
+      "accountId": "d79ddd03-f15f-4d86-9ad4-e41c073c7ff6",
+      "plan": {
+        "name": "Ravi Markam",
+        "rationale": "A small Kondagaon farm seller offering locally grown staple grains and pulses for everyday cooking.",
+        "products": [
+          {
+            "title": "Kodo Millet Grain",
+            "category": "produce",
+            "description": "Cleaned whole kodo millet from a small local harvest, naturally dried and ready for porridge, khichdi, or millet rice.",
+            "quantity": 80,
+            "unit": "kg",
+            "unitPriceRupees": 95,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          },
+          {
+            "title": "Little Millet Grain",
+            "category": "produce",
+            "description": "Locally harvested little millet, carefully sorted and dried for everyday cooking as a light rice substitute.",
+            "quantity": 65,
+            "unit": "kg",
+            "unitPriceRupees": 110,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          },
+          {
+            "title": "Kulthi Horse Gram",
+            "category": "produce",
+            "description": "Whole horse gram grown by a small Kondagaon farm, cleaned and dried for soups, dals, and traditional recipes.",
+            "quantity": 55,
+            "unit": "kg",
+            "unitPriceRupees": 90,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "04346d6b-90f9-4e6e-a5dd-c04c6819319f",
+          "title": "[SIM] Kodo Millet Grain"
+        },
+        {
+          "index": 1,
+          "id": "3cba8044-7bfb-4095-ac9c-7cd9f1ecc661",
+          "title": "[SIM] Little Millet Grain"
+        },
+        {
+          "index": 2,
+          "id": "5f9b8d34-3ceb-4531-adff-ee1ffd66a529",
+          "title": "[SIM] Kulthi Horse Gram"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "6334d7b3-70a0-40b9-a4bf-7aa8e72a17f8",
+          "action": "accept",
+          "rationale": "The 1 kg request matches the listed 110 rupees per kg price and is within available stock."
+        },
+        {
+          "id": "c61193af-ef5d-4cac-9e73-fa53c48c6313",
+          "action": "accept",
+          "rationale": "The 1 kg request matches the listed 95 rupees per kg price and is within available stock."
+        },
+        {
+          "id": "0cd0c929-ab62-407c-8757-f6ba11cdf873",
+          "action": "accept",
+          "rationale": "The 5 kg request matches the listed 90 rupees per kg price and is within available stock."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller08",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Kavita Sahu",
+      "email": "luna20_20261112_234718.seller08@example.invalid",
+      "accountId": "c41f406e-de2f-4df5-8e31-1e1fcaeb5b06",
+      "plan": {
+        "name": "Kavita Sahu",
+        "rationale": "A Kondagaon maker selling durable, locally useful metal and wood utility goods in manageable parcel sizes.",
+        "products": [
+          {
+            "title": "Hand-Forged Garden Hoe",
+            "category": "small_industry",
+            "description": "A sturdy hand-forged iron hoe head fitted with a smooth hardwood handle, suitable for home gardens and small farms.",
+            "quantity": 35,
+            "unit": "piece",
+            "unitPriceRupees": 420,
+            "estimatedWeightKgPerUnit": 1.8,
+            "packageLengthCmPerUnit": 48,
+            "packageWidthCmPerUnit": 18,
+            "packageHeightCmPerUnit": 8
+          },
+          {
+            "title": "Sal Wood Kitchen Serving Tray",
+            "category": "small_industry",
+            "description": "A locally crafted solid sal wood tray with rounded edges for serving tea, snacks, or meals.",
+            "quantity": 24,
+            "unit": "piece",
+            "unitPriceRupees": 650,
+            "estimatedWeightKgPerUnit": 1.2,
+            "packageLengthCmPerUnit": 38,
+            "packageWidthCmPerUnit": 28,
+            "packageHeightCmPerUnit": 7
+          },
+          {
+            "title": "Iron Wall-Mounted Utility Hook Set",
+            "category": "small_industry",
+            "description": "A set of four hand-bent iron hooks with a compact mounting rail for hanging kitchen or workshop tools.",
+            "quantity": 40,
+            "unit": "piece",
+            "unitPriceRupees": 280,
+            "estimatedWeightKgPerUnit": 0.9,
+            "packageLengthCmPerUnit": 22,
+            "packageWidthCmPerUnit": 14,
+            "packageHeightCmPerUnit": 6
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "1ea35549-85de-4e49-a4a7-6b73d997be7a",
+          "title": "[SIM] Hand-Forged Garden Hoe"
+        },
+        {
+          "index": 1,
+          "id": "c33e7f93-a80c-43a1-9216-4698a8479a3a",
+          "title": "[SIM] Sal Wood Kitchen Serving Tray"
+        },
+        {
+          "index": 2,
+          "id": "0101ef47-c863-4895-bd66-bd302f80ba91",
+          "title": "[SIM] Iron Wall-Mounted Utility Hook Set"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "1021fce8-d11d-4cc8-872e-31dc38edf450",
+          "action": "accept",
+          "rationale": "One hoe is within the listed stock of 35, and the request price matches the listed price of Rs 420 per piece."
+        },
+        {
+          "id": "a635180b-a380-41e6-a96d-990f69ef6794",
+          "action": "accept",
+          "rationale": "One tray is within the listed stock of 24, and the request price matches the listed price of Rs 650 per piece."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller09",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Meera Netam",
+      "email": "luna20_20261112_234718.seller09@example.invalid",
+      "accountId": "fd8037f0-2f3c-4c0a-8650-b7393ed019ed",
+      "plan": {
+        "name": "Meera Netam",
+        "rationale": "A Kondagaon grower offering three familiar seasonal vegetables with clear, small-parcel quantities for local buyers.",
+        "products": [
+          {
+            "title": "Fresh Green Peas",
+            "category": "produce",
+            "description": "Tender, freshly harvested green peas, suitable for curries and seasonal home cooking.",
+            "quantity": 70,
+            "unit": "kg",
+            "unitPriceRupees": 80,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          },
+          {
+            "title": "Fresh Cauliflower",
+            "category": "produce",
+            "description": "Firm, clean cauliflower heads harvested fresh for everyday meals and winter recipes.",
+            "quantity": 55,
+            "unit": "kg",
+            "unitPriceRupees": 35,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          },
+          {
+            "title": "Red Carrots",
+            "category": "produce",
+            "description": "Sweet, crisp red carrots, freshly pulled and ready for salads, cooking, or seasonal sweets.",
+            "quantity": 60,
+            "unit": "kg",
+            "unitPriceRupees": 40,
+            "estimatedWeightKgPerUnit": 1,
+            "packageLengthCmPerUnit": 25,
+            "packageWidthCmPerUnit": 20,
+            "packageHeightCmPerUnit": 15
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "8bb79e27-8c36-41df-ac28-9836df78866c",
+          "title": "[SIM] Fresh Green Peas"
+        },
+        {
+          "index": 1,
+          "id": "9d347cc8-f049-4f35-b5b4-7462fa58c30d",
+          "title": "[SIM] Fresh Cauliflower"
+        },
+        {
+          "index": 2,
+          "id": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+          "title": "[SIM] Red Carrots"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "9caabd9a-1dc5-42ca-8f9e-b2d90af5d300",
+          "action": "accept",
+          "rationale": "Accepting 1 kg at the listed price of Rs 40; stock is available."
+        },
+        {
+          "id": "23caf989-63e3-4cb3-9615-0463dd35adf9",
+          "action": "accept",
+          "rationale": "Accepting 5 kg at the listed price of Rs 40 per kg; stock is available."
+        }
+      ],
+      "transportSearches": []
+    },
+    {
+      "actor": "seller10",
+      "role": "seller",
+      "model": "gpt-6-luna",
+      "name": "Meera Netam",
+      "email": "luna20_20261112_234718.seller10@example.invalid",
+      "accountId": "0d1971ab-18d1-43da-8a19-e56950022cc1",
+      "plan": {
+        "name": "Meera Netam",
+        "rationale": "Kondagaon maker offering durable handmade household goods from local craft traditions.",
+        "products": [
+          {
+            "title": "Handwoven Cotton Floor Duster",
+            "category": "small_industry",
+            "description": "Reusable handwoven cotton duster for cleaning household floors and surfaces.",
+            "quantity": 40,
+            "unit": "piece",
+            "unitPriceRupees": 180,
+            "estimatedWeightKgPerUnit": 0.35,
+            "packageLengthCmPerUnit": 28,
+            "packageWidthCmPerUnit": 18,
+            "packageHeightCmPerUnit": 4
+          },
+          {
+            "title": "Handmade Clay Water Pitcher",
+            "category": "small_industry",
+            "description": "Unglazed earthen pitcher shaped by hand for storing and cooling drinking water.",
+            "quantity": 40,
+            "unit": "piece",
+            "unitPriceRupees": 320,
+            "estimatedWeightKgPerUnit": 1.4,
+            "packageLengthCmPerUnit": 24,
+            "packageWidthCmPerUnit": 24,
+            "packageHeightCmPerUnit": 32
+          },
+          {
+            "title": "Sal Leaf Serving Bowl Set",
+            "category": "small_industry",
+            "description": "Set of six stitched sal-leaf bowls for serving snacks or dry household provisions.",
+            "quantity": 40,
+            "unit": "piece",
+            "unitPriceRupees": 150,
+            "estimatedWeightKgPerUnit": 0.2,
+            "packageLengthCmPerUnit": 22,
+            "packageWidthCmPerUnit": 22,
+            "packageHeightCmPerUnit": 8
+          }
+        ]
+      },
+      "listings": [
+        {
+          "index": 0,
+          "id": "0f03b916-9b9c-4164-b846-aafcd0cd86f7",
+          "title": "[SIM] Handwoven Cotton Floor Duster"
+        },
+        {
+          "index": 1,
+          "id": "7f24bd70-2cbc-4d37-b518-731f0e1e79c7",
+          "title": "[SIM] Handmade Clay Water Pitcher"
+        },
+        {
+          "index": 2,
+          "id": "a723e17a-fd93-433c-bcbe-cda5c914f11b",
+          "title": "[SIM] Sal Leaf Serving Bowl Set"
+        }
+      ],
+      "orders": [],
+      "sellerDecisions": [
+        {
+          "id": "7b6d6824-689e-4ef2-b162-67fd6df7d44f",
+          "action": "accept",
+          "rationale": "Two pieces are within the listed stock of 40, and the requested unit price matches the listing price of 150 rupees."
+        }
+      ],
+      "transportSearches": []
+    }
+  ],
+  "orders": [
+    {
+      "id": "1fe36d67-61a2-4892-8ac0-8cc57c30fa56",
+      "listingId": "52c0503c-4f10-483f-8bcb-b959c253e4ac",
+      "sellerId": "ba761d57-4880-451c-bb41-c6b917d5c8c3",
+      "buyerName": "Maya Sahu",
+      "buyerPhone": "+919000000009",
+      "sellerPhone": "+919000000001",
+      "productName": "[SIM] Bamboo and Cane Storage Basket",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 780,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:27:12.499Z",
+      "updatedAt": "2026-11-12T18:27:57.038Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 780,
+      "acceptedTotalPriceRupees": 780
+    },
+    {
+      "id": "ccc0eff2-3379-4420-aea8-695a510c196b",
+      "listingId": "54d928e6-d1c9-4e0c-b145-156a5ec39c59",
+      "sellerId": "ba761d57-4880-451c-bb41-c6b917d5c8c3",
+      "buyerName": "Aarav Deshmukh",
+      "buyerPhone": "+919000000003",
+      "sellerPhone": "+919000000001",
+      "productName": "[SIM] Bell Metal Tribal Dance Figurine",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 2100,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:25:16.398Z",
+      "updatedAt": "2026-11-12T18:27:57.393Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 2100,
+      "acceptedTotalPriceRupees": 2100
+    },
+    {
+      "id": "e9b5065f-6793-4878-8fa7-47863fc55d53",
+      "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+      "sellerId": "903db5b0-0545-48e8-8767-7205923e8d7e",
+      "buyerName": "Synthetic First Last",
+      "buyerPhone": "+919000000007",
+      "sellerPhone": "+919000000002",
+      "productName": "[SIM] Whole Green Moong Beans",
+      "quantity": 2,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 118,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:24.438Z",
+      "updatedAt": "2026-11-12T18:28:05.709Z",
+      "acceptedQuantity": 2,
+      "acceptedUnitPriceRupees": 118,
+      "acceptedTotalPriceRupees": 236
+    },
+    {
+      "id": "9f1d4e3d-a3cd-4160-ae76-8aab6cc20d59",
+      "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+      "sellerId": "903db5b0-0545-48e8-8767-7205923e8d7e",
+      "buyerName": "Asha Verma",
+      "buyerPhone": "+919000000006",
+      "sellerPhone": "+919000000002",
+      "productName": "[SIM] Whole Green Moong Beans",
+      "quantity": 2,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 118,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:17.092Z",
+      "updatedAt": "2026-11-12T18:28:06.053Z",
+      "acceptedQuantity": 2,
+      "acceptedUnitPriceRupees": 118,
+      "acceptedTotalPriceRupees": 236
+    },
+    {
+      "id": "300afb5a-2e35-43a9-91dd-85cc89870868",
+      "listingId": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+      "sellerId": "903db5b0-0545-48e8-8767-7205923e8d7e",
+      "buyerName": "Asha Verma",
+      "buyerPhone": "+919000000002",
+      "sellerPhone": "+919000000002",
+      "productName": "[SIM] Whole Green Moong Beans",
+      "quantity": 4,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 118,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:25:05.223Z",
+      "updatedAt": "2026-11-12T18:28:06.380Z",
+      "acceptedQuantity": 4,
+      "acceptedUnitPriceRupees": 118,
+      "acceptedTotalPriceRupees": 472
+    },
+    {
+      "id": "e7ab759f-74ef-4f9e-aa59-d1fc7787f621",
+      "listingId": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+      "sellerId": "b70ec9f3-d268-4df4-a4fa-eb6489c92dce",
+      "buyerName": "Synthetic First Last",
+      "buyerPhone": "+919000000007",
+      "sellerPhone": "+919000000003",
+      "productName": "[SIM] Bamboo Kitchen Utensil Holder",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 190,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:24.674Z",
+      "updatedAt": "2026-11-12T18:28:11.524Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 190,
+      "acceptedTotalPriceRupees": 190
+    },
+    {
+      "id": "345b032e-e093-4457-874a-3e0f1394943c",
+      "listingId": "91d70884-4f35-480f-a8b4-e813d3ac55ee",
+      "sellerId": "b70ec9f3-d268-4df4-a4fa-eb6489c92dce",
+      "buyerName": "Asha Verma",
+      "buyerPhone": "+919000000006",
+      "sellerPhone": "+919000000003",
+      "productName": "[SIM] Handwoven Bamboo Storage Basket",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 280,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:17.333Z",
+      "updatedAt": "2026-11-12T18:28:12.078Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 280,
+      "acceptedTotalPriceRupees": 280
+    },
+    {
+      "id": "73b18763-5cbf-4555-8903-099bacf4c018",
+      "listingId": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+      "sellerId": "b70ec9f3-d268-4df4-a4fa-eb6489c92dce",
+      "buyerName": "Maya Verma",
+      "buyerPhone": "+919000000004",
+      "sellerPhone": "+919000000003",
+      "productName": "[SIM] Bamboo Kitchen Utensil Holder",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 190,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:25:43.971Z",
+      "updatedAt": "2026-11-12T18:28:12.412Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 190,
+      "acceptedTotalPriceRupees": 190
+    },
+    {
+      "id": "0ac7cc51-a464-444b-a0fd-c123d8d4cfab",
+      "listingId": "8614aa78-0f8f-48f6-b588-f450413db3e3",
+      "sellerId": "ba8abd09-7e9a-4d61-8f37-b5e4768748ff",
+      "buyerName": "Maya Verma",
+      "buyerPhone": "+919000000008",
+      "sellerPhone": "+919000000005",
+      "productName": "[SIM] Handwoven Cotton Table Runner",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 680,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:48.180Z",
+      "updatedAt": "2026-11-12T18:29:10.670Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 680,
+      "acceptedTotalPriceRupees": 680
+    },
+    {
+      "id": "2be4b91d-2e2b-4ce8-90f0-bc5d301db7cd",
+      "listingId": "c64f58bd-19d7-4c04-9585-804997dc3bd2",
+      "sellerId": "ba8abd09-7e9a-4d61-8f37-b5e4768748ff",
+      "buyerName": "Aarav Deshmukh",
+      "buyerPhone": "+919000000003",
+      "sellerPhone": "+919000000005",
+      "productName": "[SIM] Kosa Silk Stole with Woven Border",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 1450,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:25:16.638Z",
+      "updatedAt": "2026-11-12T18:29:10.988Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 1450,
+      "acceptedTotalPriceRupees": 1450
+    },
+    {
+      "id": "27e3641b-d667-4a04-8340-0611d26d6d7d",
+      "listingId": "4a03369d-2735-4226-9fb3-94b30a2876a6",
+      "sellerId": "8b47d025-e866-471e-8627-8c4ce13040e0",
+      "buyerName": "Maya Verma",
+      "buyerPhone": "+919000000008",
+      "sellerPhone": "+919000000006",
+      "productName": "[SIM] Terracotta Diya Set of Six",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 160,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:47.937Z",
+      "updatedAt": "2026-11-12T18:29:21.730Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 160,
+      "acceptedTotalPriceRupees": 160
+    },
+    {
+      "id": "9f80aca2-9dc8-4059-bfe0-b66d59b19539",
+      "listingId": "c3edc05e-9edb-4833-ac18-14d7f0577c1a",
+      "sellerId": "8b47d025-e866-471e-8627-8c4ce13040e0",
+      "buyerName": "Mira Patel",
+      "buyerPhone": "+919000000005",
+      "sellerPhone": "+919000000006",
+      "productName": "[SIM] Handcrafted Terracotta Serving Bowl",
+      "quantity": 2,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 240,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:03.961Z",
+      "updatedAt": "2026-11-12T18:29:22.056Z",
+      "acceptedQuantity": 2,
+      "acceptedUnitPriceRupees": 240,
+      "acceptedTotalPriceRupees": 480
+    },
+    {
+      "id": "6334d7b3-70a0-40b9-a4bf-7aa8e72a17f8",
+      "listingId": "3cba8044-7bfb-4095-ac9c-7cd9f1ecc661",
+      "sellerId": "d79ddd03-f15f-4d86-9ad4-e41c073c7ff6",
+      "buyerName": "Mina Sahu",
+      "buyerPhone": "+919000000010",
+      "sellerPhone": "+919000000007",
+      "productName": "[SIM] Little Millet Grain",
+      "quantity": 1,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 110,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:27:21.494Z",
+      "updatedAt": "2026-11-12T18:29:38.042Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 110,
+      "acceptedTotalPriceRupees": 110
+    },
+    {
+      "id": "c61193af-ef5d-4cac-9e73-fa53c48c6313",
+      "listingId": "04346d6b-90f9-4e6e-a5dd-c04c6819319f",
+      "sellerId": "d79ddd03-f15f-4d86-9ad4-e41c073c7ff6",
+      "buyerName": "Mira Patel",
+      "buyerPhone": "+919000000005",
+      "sellerPhone": "+919000000007",
+      "productName": "[SIM] Kodo Millet Grain",
+      "quantity": 1,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 95,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:26:03.721Z",
+      "updatedAt": "2026-11-12T18:29:38.393Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 95,
+      "acceptedTotalPriceRupees": 95
+    },
+    {
+      "id": "0cd0c929-ab62-407c-8757-f6ba11cdf873",
+      "listingId": "5f9b8d34-3ceb-4531-adff-ee1ffd66a529",
+      "sellerId": "d79ddd03-f15f-4d86-9ad4-e41c073c7ff6",
+      "buyerName": "Ananya Verma",
+      "buyerPhone": "+919000000001",
+      "sellerPhone": "+919000000007",
+      "productName": "[SIM] Kulthi Horse Gram",
+      "quantity": 5,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 90,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:24:54.304Z",
+      "updatedAt": "2026-11-12T18:29:38.725Z",
+      "acceptedQuantity": 5,
+      "acceptedUnitPriceRupees": 90,
+      "acceptedTotalPriceRupees": 450
+    },
+    {
+      "id": "1021fce8-d11d-4cc8-872e-31dc38edf450",
+      "listingId": "1ea35549-85de-4e49-a4a7-6b73d997be7a",
+      "sellerId": "c41f406e-de2f-4df5-8e31-1e1fcaeb5b06",
+      "buyerName": "Maya Sahu",
+      "buyerPhone": "+919000000009",
+      "sellerPhone": "+919000000008",
+      "productName": "[SIM] Hand-Forged Garden Hoe",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 420,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:27:12.261Z",
+      "updatedAt": "2026-11-12T18:29:41.521Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 420,
+      "acceptedTotalPriceRupees": 420
+    },
+    {
+      "id": "a635180b-a380-41e6-a96d-990f69ef6794",
+      "listingId": "c33e7f93-a80c-43a1-9216-4698a8479a3a",
+      "sellerId": "c41f406e-de2f-4df5-8e31-1e1fcaeb5b06",
+      "buyerName": "Ananya Verma",
+      "buyerPhone": "+919000000001",
+      "sellerPhone": "+919000000008",
+      "productName": "[SIM] Sal Wood Kitchen Serving Tray",
+      "quantity": 1,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 650,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:24:54.576Z",
+      "updatedAt": "2026-11-12T18:29:41.853Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 650,
+      "acceptedTotalPriceRupees": 650
+    },
+    {
+      "id": "9caabd9a-1dc5-42ca-8f9e-b2d90af5d300",
+      "listingId": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+      "sellerId": "fd8037f0-2f3c-4c0a-8650-b7393ed019ed",
+      "buyerName": "Mina Sahu",
+      "buyerPhone": "+919000000010",
+      "sellerPhone": "+919000000009",
+      "productName": "[SIM] Red Carrots",
+      "quantity": 1,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 40,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:27:21.271Z",
+      "updatedAt": "2026-11-12T18:30:11.533Z",
+      "acceptedQuantity": 1,
+      "acceptedUnitPriceRupees": 40,
+      "acceptedTotalPriceRupees": 40
+    },
+    {
+      "id": "23caf989-63e3-4cb3-9615-0463dd35adf9",
+      "listingId": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+      "sellerId": "fd8037f0-2f3c-4c0a-8650-b7393ed019ed",
+      "buyerName": "Asha Verma",
+      "buyerPhone": "+919000000002",
+      "sellerPhone": "+919000000009",
+      "productName": "[SIM] Red Carrots",
+      "quantity": 5,
+      "unit": "kg",
+      "requestedUnitPriceRupees": 40,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:25:04.992Z",
+      "updatedAt": "2026-11-12T18:31:01.680Z",
+      "acceptedQuantity": 5,
+      "acceptedUnitPriceRupees": 40,
+      "acceptedTotalPriceRupees": 200
+    },
+    {
+      "id": "7b6d6824-689e-4ef2-b162-67fd6df7d44f",
+      "listingId": "a723e17a-fd93-433c-bcbe-cda5c914f11b",
+      "sellerId": "0d1971ab-18d1-43da-8a19-e56950022cc1",
+      "buyerName": "Maya Verma",
+      "buyerPhone": "+919000000004",
+      "sellerPhone": "+919000000010",
+      "productName": "[SIM] Sal Leaf Serving Bowl Set",
+      "quantity": 2,
+      "unit": "piece",
+      "requestedUnitPriceRupees": 150,
+      "status": "accepted",
+      "createdAt": "2026-11-12T18:25:44.205Z",
+      "updatedAt": "2026-11-12T18:30:16.473Z",
+      "acceptedQuantity": 2,
+      "acceptedUnitPriceRupees": 150,
+      "acceptedTotalPriceRupees": 300
+    }
+  ],
+  "searches": [
+    {
+      "actor": "buyer01",
+      "orderId": "0cd0c929-ab62-407c-8757-f6ba11cdf873",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "Five kilograms of local kulthi horse gram make a nutritious, practical pantry staple."
+    },
+    {
+      "actor": "buyer01",
+      "orderId": "a635180b-a380-41e6-a96d-990f69ef6794",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "A locally made sal wood serving tray is a durable, useful household item from a different seller."
+    },
+    {
+      "actor": "buyer02",
+      "orderId": "23caf989-63e3-4cb3-9615-0463dd35adf9",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "Five kilograms of carrots provide a versatile vegetable for several family meals at a low price."
+    },
+    {
+      "actor": "buyer02",
+      "orderId": "300afb5a-2e35-43a9-91dd-85cc89870868",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "Four kilograms of green moong add filling protein for family meals, from a different seller."
+    },
+    {
+      "actor": "buyer03",
+      "orderId": "ccc0eff2-3379-4420-aea8-695a510c196b",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "The bell metal tribal dance figurine is a distinctive handcrafted keepsake and a substantial centerpiece gift."
+    },
+    {
+      "actor": "buyer03",
+      "orderId": "2be4b91d-2e2b-4ce8-90f0-bc5d301db7cd",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "The Kosa silk stole is a useful, locally crafted gift with a woven border; it pairs well with the figurine."
+    },
+    {
+      "actor": "buyer04",
+      "orderId": "73b18763-5cbf-4555-8903-099bacf4c018",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "A bamboo utensil holder keeps everyday cooking tools organized and accessible."
+    },
+    {
+      "actor": "buyer04",
+      "orderId": "7b6d6824-689e-4ef2-b162-67fd6df7d44f",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "Two sets of sal leaf bowls provide practical serving ware for family meals and guests."
+    },
+    {
+      "actor": "buyer05",
+      "orderId": "c61193af-ef5d-4cac-9e73-fa53c48c6313",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "Kodo millet is a locally sourced grain for a cafe lunch special."
+    },
+    {
+      "actor": "buyer05",
+      "orderId": "9f80aca2-9dc8-4059-bfe0-b66d59b19539",
+      "destination": "Raipur",
+      "matchCount": 2,
+      "matches": [
+        {
+          "tripId": "demo-trip-1",
+          "transporterName": "Simulation transporter 1",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "medium_truck",
+          "availableCapacityKg": 300,
+          "departAt": "2026-11-14T18:20:48.547Z",
+          "routeSummary": "Kondagaon to Raipur via Kanker",
+          "pickupPoint": {
+            "name": "Sample pickup",
+            "lat": 19.65,
+            "lng": 81.66
+          },
+          "dropPoint": {
+            "name": "Sample drop",
+            "lat": 21.2,
+            "lng": 81.64
+          },
+          "pickupDistanceKm": 7.4,
+          "dropDistanceKm": 6.1,
+          "sharedRouteKm": 230,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        },
+        {
+          "tripId": "demo-trip-2",
+          "transporterName": "Simulation transporter 2",
+          "transporterPhone": "+910000000000",
+          "vehicleType": "mini_truck",
+          "availableCapacityKg": 180,
+          "departAt": "2026-11-14T20:20:48.548Z",
+          "routeSummary": "Kondagaon to Raipur via Baderajpur",
+          "pickupPoint": {
+            "name": "Secondary pickup",
+            "lat": 19.72,
+            "lng": 81.62
+          },
+          "dropPoint": {
+            "name": "Secondary drop",
+            "lat": 21.15,
+            "lng": 81.59
+          },
+          "pickupDistanceKm": 9.1,
+          "dropDistanceKm": 8.4,
+          "sharedRouteKm": 215,
+          "fitStatus": "potential_fit",
+          "explanation": "Retained AI simulation fixture; not a real journey or callable transporter."
+        }
+      ],
+      "rationale": "Terracotta bowls provide durable, locally crafted presentation for dine-in service."
+    },
+    {
+      "actor": "buyer06",
+      "orderId": "9f1d4e3d-a3cd-4160-ae76-8aab6cc20d59",
+      "destination": "Raipur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "Two kilograms of whole green moong for home cooking, total Rs236."
+    },
+    {
+      "actor": "buyer06",
+      "orderId": "345b032e-e093-4457-874a-3e0f1394943c",
+      "destination": "Raipur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "One handwoven bamboo basket for household storage, Rs280."
+    },
+    {
+      "actor": "buyer07",
+      "orderId": "e9b5065f-6793-4878-8fa7-47863fc55d53",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "Two kilograms of whole green moong beans for household meals at Rs 118 per kg."
+    },
+    {
+      "actor": "buyer07",
+      "orderId": "e7ab759f-74ef-4f9e-aa59-d1fc7787f621",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "A bamboo kitchen utensil holder for everyday kitchen organization at Rs 190."
+    },
+    {
+      "actor": "buyer08",
+      "orderId": "27e3641b-d667-4a04-8340-0611d26d6d7d",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "A handmade terracotta diya set adds warm traditional light to my living room."
+    },
+    {
+      "actor": "buyer08",
+      "orderId": "0ac7cc51-a464-444b-a0fd-c123d8d4cfab",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "A handwoven cotton table runner brings a local textile accent to my dining table."
+    },
+    {
+      "actor": "buyer09",
+      "orderId": "1021fce8-d11d-4cc8-872e-31dc38edf450",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "A hand-forged hoe for preparing beds and weeding the household garden."
+    },
+    {
+      "actor": "buyer09",
+      "orderId": "1fe36d67-61a2-4892-8ac0-8cc57c30fa56",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "A bamboo and cane basket to carry harvested vegetables and gardening supplies."
+    },
+    {
+      "actor": "buyer10",
+      "orderId": "9caabd9a-1dc5-42ca-8f9e-b2d90af5d300",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "One kilogram of affordable red carrots for everyday meals."
+    },
+    {
+      "actor": "buyer10",
+      "orderId": "6334d7b3-70a0-40b9-a4bf-7aa8e72a17f8",
+      "destination": "Jagdalpur",
+      "matchCount": 0,
+      "matches": [],
+      "rationale": "One kilogram of nutritious local little millet as a household staple."
+    }
+  ],
+  "failures": [
+    {
+      "at": "2026-11-12T18:23:43.208Z",
+      "actor": "seller08",
+      "method": "POST",
+      "path": "/api/listings",
+      "status": 400,
+      "durationMs": 104,
+      "error": "INVALID_INPUT"
+    },
+    {
+      "at": "2026-11-12T18:30:11.784Z",
+      "actor": "seller09",
+      "method": "GET",
+      "path": "/api/requests/23caf989-63e3-4cb3-9631-0463dd35adf9",
+      "status": 404,
+      "durationMs": 111,
+      "error": "NOT_FOUND"
+    },
+    {
+      "at": "2026-11-12T18:30:27.855Z",
+      "actor": "seller09",
+      "method": "GET",
+      "path": "/api/requests/23caf989-63e3-4cb3-9631-0463dd35adf9",
+      "status": 404,
+      "durationMs": 106,
+      "error": "NOT_FOUND"
+    }
+  ],
+  "budgetChecks": [
+    {
+      "actor": "buyer01",
+      "assignedBudgetRupees": 1800,
+      "requestedTotalRupees": 1100,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer02",
+      "assignedBudgetRupees": 1200,
+      "requestedTotalRupees": 672,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer03",
+      "assignedBudgetRupees": 3500,
+      "requestedTotalRupees": 3550,
+      "withinBudget": false
+    },
+    {
+      "actor": "buyer04",
+      "assignedBudgetRupees": 1600,
+      "requestedTotalRupees": 490,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer05",
+      "assignedBudgetRupees": 2500,
+      "requestedTotalRupees": 575,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer06",
+      "assignedBudgetRupees": 1300,
+      "requestedTotalRupees": 516,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer07",
+      "assignedBudgetRupees": 1400,
+      "requestedTotalRupees": 426,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer08",
+      "assignedBudgetRupees": 2200,
+      "requestedTotalRupees": 840,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer09",
+      "assignedBudgetRupees": 1800,
+      "requestedTotalRupees": 1200,
+      "withinBudget": true
+    },
+    {
+      "actor": "buyer10",
+      "assignedBudgetRupees": 1000,
+      "requestedTotalRupees": 150,
+      "withinBudget": true
+    }
+  ],
+  "findings": [
+    {
+      "type": "agent_input_error",
+      "actor": "seller08",
+      "detail": "The agent chose unsupported unit set for its third listing. API rejected it correctly; the agent retained its original plan, changed the unit to piece and retried without duplicate listings."
+    },
+    {
+      "type": "agent_transcription_error",
+      "actor": "seller09",
+      "detail": "The agent copied 9615 as 9631 in an order UUID, causing two 404s. The original decisions and failed events were retained; correcting the ID from the inbox allowed acceptance."
+    },
+    {
+      "type": "agent_decision_error",
+      "actor": "buyer03",
+      "detail": "Requested Rs3550 against a synthetic Rs3500 budget. The marketplace has no budget-limit feature; no actual payment occurred."
+    }
+  ],
+  "cost": {
+    "measuredTokens": null,
+    "actualChargeUSD": null,
+    "reason": "Built-in Codex Luna subagents were used; this session does not expose per-agent token/billing totals. No separate OpenAI API key was used."
+  },
+  "dataRetention": "All database rows, fixture files, actor plans and ignored local credential files are retained. No cleanup was run."
+}

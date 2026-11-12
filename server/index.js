@@ -511,6 +511,7 @@ export async function handle(req, res, sessionStore = databaseSessionStore, mark
   } catch (e) {
     if (e.message === 'TOO_LARGE') return fail(res, 413, 'TOO_LARGE', 'Request too large');
     if (e.message === 'INVALID_JSON') return fail(res, 400, 'INVALID_JSON', 'Invalid JSON');
+    console.error('Marketplace request failed', { method: req.method, path, code: e.code || 'UNKNOWN' });
     return fail(res, 500, 'SERVER_ERROR', 'Unexpected server error');
   }
 }

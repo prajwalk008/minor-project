@@ -5,12 +5,14 @@ import { readdir, readFile } from 'node:fs/promises';
 import pg from 'pg';
 import { databasePool, closeDatabasePool, createListingPhoto, createListing, createBuyerRequest, acceptRequestAndDecrementStock, updateRequestStatus } from './db.js';
 import { getProductSummaries, getProductReviews, getReviewEligibility, createProductReview, findReviewImage } from './products.js';
+import { createServer } from './index.js';
 
 // Opt in explicitly. All writes are confined to a fresh schema, removed in finally.
 test('PostgreSQL migrations, concurrent stock acceptance, completion and review transactions', { skip: process.env.RUN_DATABASE_TESTS !== '1' }, async () => {
   const schema = 'product_test_' + randomUUID().replaceAll('-', '');
   const previousOptions = process.env.PGOPTIONS;
   let schemaCreated = false;
+  let api;
   const admin = new pg.Pool({ connectionString: process.env.DATABASE_URL, ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false, max: 1 });
   try {
     await admin.query(`CREATE SCHEMA ${schema}`);
@@ -19,7 +21,34 @@ test('PostgreSQL migrations, concurrent stock acceptance, completion and review 
     const db = databasePool();
     assert.equal((await db.query('SELECT current_schema() AS schema')).rows[0].schema, schema);
     const migrations = (await readdir(new URL('./migrations/', import.meta.url))).filter(name => name.endsWith('.sql')).sort();
-    for (const name of migrations) await db.query(await readFile(new URL('./migrations/' + name, import.meta.url), 'utf8'));
+    for (const name of migrations) {
+      if (name === '006_restore_first_name.sql') {
+        await db.query('ALTER TABLE users RENAME COLUMN first_name TO "Prajwal"');
+        await db.query(`INSERT INTO users (id, role, email, password_salt, password_hash, "Prajwal", last_name)
+          VALUES ($1, 'customer', 'schema-repair@example.invalid', 'test', 'test', 'Preserved', 'Name')`, [randomUUID()]);
+      }
+      await db.query(await readFile(new URL('./migrations/' + name, import.meta.url), 'utf8'));
+      if (name === '006_restore_first_name.sql') {
+        assert.equal((await db.query("SELECT first_name FROM users WHERE email = 'schema-repair@example.invalid'")).rows[0].first_name, 'Preserved');
+        // The repair is also safe on an already-correct schema.
+        await db.query(await readFile(new URL('./migrations/' + name, import.meta.url), 'utf8'));
+      }
+    }
+    // Exercise the real auth queries and session store after the schema repair.
+    api = createServer();
+    await new Promise(resolve => api.listen(0, '127.0.0.1', resolve));
+    const apiBase = `http://127.0.0.1:${api.address().port}`;
+    const credentials = { role: 'customer', email: 'login-regression@example.invalid', password: 'test-password-123' };
+    const registerResponse = await fetch(apiBase + '/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...credentials, firstName: 'Login', lastName: 'Regression' }) });
+    assert.equal(registerResponse.status, 201);
+    await registerResponse.json();
+    const loginResponse = await fetch(apiBase + '/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: credentials.role, identifier: credentials.email, password: credentials.password }) });
+    assert.equal(loginResponse.status, 200);
+    const loginSession = await loginResponse.json();
+    assert.equal(loginSession.account.firstName, 'Login');
+    const ownedRequests = await fetch(apiBase + '/api/buyers/me/requests', { headers: { Authorization: `Bearer ${loginSession.token}` } });
+    assert.equal(ownedRequests.status, 200);
+    assert.deepEqual((await ownedRequests.json()).requests, []);
     const sellerId = randomUUID(), buyerId = randomUUID(), otherBuyerId = randomUUID();
     for (const [id, role, first] of [[sellerId, 'seller', 'Artisan'], [buyerId, 'customer', 'Buyer'], [otherBuyerId, 'customer', 'Other']]) {
       await db.query(`INSERT INTO users (id, role, email, phone, password_salt, password_hash, first_name, last_name)
@@ -58,6 +87,7 @@ test('PostgreSQL migrations, concurrent stock acceptance, completion and review 
     assert.equal(summary.unitsSold, 4);
     assert.equal(summary.sellerName, 'Artisan Test');
   } finally {
+    if (api) await new Promise(resolve => api.close(resolve));
     await closeDatabasePool();
     if (previousOptions === undefined) delete process.env.PGOPTIONS; else process.env.PGOPTIONS = previousOptions;
     if (schemaCreated) await admin.query(`DROP SCHEMA ${schema} CASCADE`);

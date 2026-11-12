@@ -46,3 +46,14 @@ node scripts/simulation/report.mjs <run>
 ```
 
 All requests and their status/latency are logged per actor. **No cleanup is performed.** Database records, plans, fixtures, reports and ignored local test credentials remain under the run ID. Never commit or publish `*.state.json`: they contain synthetic-account passwords and bearer tokens. Reports omit passwords/tokens. There is no external LLM API call in these helpers; Luna runs through the session's subagent tool, so API token estimates are not measured charges for this run. This tests API workflows, not visual UI behavior or twenty simultaneous sessions.
+
+## Copy sample data into the main marketplace
+
+Use this only when the sample records are wanted in the main application's `public` schema:
+
+```powershell
+node scripts/simulation/promote.mjs luna20_20261112_234718
+node scripts/simulation/promote.mjs luna20_20261112_234718 --apply
+```
+
+The first command previews counts and checks for conflicts without writing database records. `--apply` copies users (including existing password hashes), listing photos, products, order requests, reviews and review images in one transaction, preserving IDs and stock. It leaves the source schema and existing main records intact. Identical records are skipped on repeats; conflicting IDs or email/other unique constraints abort the copy rather than overwriting records. Application session tokens are not copied: sign in again to use a sample account in the main UI with its retained test credentials. An audit is retained in the run's `promotion.json` and `promotion-history.jsonl`. The main marketplace uses API 4000 and web port 8081; the isolated preview stays on 4001/8082. Transport fixtures are not part of this database copy.

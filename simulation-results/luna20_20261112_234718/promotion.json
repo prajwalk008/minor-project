@@ -1,0 +1,54 @@
+{
+  "runId": "luna20_20261112_234718",
+  "sourceSchema": "sim_luna20_20261112_234718",
+  "targetSchema": "public",
+  "applied": true,
+  "at": "2026-11-12T18:44:21.913Z",
+  "sourcePreserved": true,
+  "existingRowsOverwritten": false,
+  "sessionsCopied": false,
+  "tables": {
+    "users": {
+      "source": 20,
+      "targetBefore": 4,
+      "existing": 0,
+      "conflicting": 0,
+      "inserted": 20
+    },
+    "listing_photos": {
+      "source": 30,
+      "targetBefore": 0,
+      "existing": 0,
+      "conflicting": 0,
+      "inserted": 30
+    },
+    "listings": {
+      "source": 30,
+      "targetBefore": 0,
+      "existing": 0,
+      "conflicting": 0,
+      "inserted": 30
+    },
+    "requests": {
+      "source": 20,
+      "targetBefore": 0,
+      "existing": 0,
+      "conflicting": 0,
+      "inserted": 20
+    },
+    "product_reviews": {
+      "source": 0,
+      "targetBefore": 0,
+      "existing": 0,
+      "conflicting": 0,
+      "inserted": 0
+    },
+    "product_review_images": {
+      "source": 0,
+      "targetBefore": 0,
+      "existing": 0,
+      "conflicting": 0,
+      "inserted": 0
+    }
+  }
+}

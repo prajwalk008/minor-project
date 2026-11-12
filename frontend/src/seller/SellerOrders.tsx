@@ -3,19 +3,25 @@ import { Linking, Pressable, Text, View } from 'react-native';
 import { displayError, setRequestStatus } from '../api';
 import type { OrderRequest } from '../types';
 import { showAlert } from '../ui';
+import { useAppState } from '../app/_layout';
 import { useSeller } from './SellerProvider';
 import { Action, Choice, EmptyState, NumberField, PageHeader, StatusBadge, type Translate } from './SellerUI';
 import { st } from './styles';
 
 function OrderCard({ order, title, t, changed }: { order: OrderRequest; title: string; t: Translate; changed: () => Promise<void> }) {
+  const { token, account } = useAppState();
   const [qty, setQty] = useState(order.quantity);
   const [unitPrice, setUnitPrice] = useState(order.requestedUnitPriceRupees);
   const [total, setTotal] = useState(order.quantity * order.requestedUnitPriceRupees);
   const [busy, setBusy] = useState(false);
   const act = async (action: 'accept' | 'decline') => {
+    if (!token || account?.role !== 'seller') {
+      showAlert(t('error'), t('error'));
+      return;
+    }
     setBusy(true);
     try {
-      await setRequestStatus(order.id, { action, exactQuantity: qty, unitPriceRupees: unitPrice, totalPriceRupees: total });
+      await setRequestStatus(order.id, { action, exactQuantity: qty, unitPriceRupees: unitPrice, totalPriceRupees: total }, token);
       await changed();
     } catch (error) {
       showAlert(t('error'), displayError(error, t));

@@ -18,25 +18,32 @@ export function displayError(e: unknown, t: (key: Key) => string): string {
   }
   return t('error');
 }
-async function json<T>(path: string, method = 'GET', data?: unknown): Promise<T> {
-  const response = await fetch(`${API}${path}`, { method, headers: data ? { 'Content-Type': 'application/json' } : undefined, body: data ? JSON.stringify(data) : undefined });
+async function json<T>(path: string, method = 'GET', data?: unknown, token?: string): Promise<T> {
+  const headers: Record<string, string> = {};
+  if (data) headers['Content-Type'] = 'application/json';
+  if (token) headers.Authorization = `Bearer ${token}`;
+  const response = await fetch(`${API}${path}`, { method, headers, body: data ? JSON.stringify(data) : undefined });
   const result = await response.json();
   if (!response.ok) throw new ApiError(result.error?.code || 'HTTP_ERROR', result.error?.message || 'Request failed');
   return result as T;
 }
-export async function publishDraft(d: Draft): Promise<Listing> {
-  const photo = await json<{ photoId: string }>('/api/listing-photos', 'POST', { sellerId: 'demo-seller', clientPhotoId: d.clientPhotoId, mimeType: d.photoMimeType, base64: await photoBase64(d.photoRef) });
-  return json<Listing>('/api/listings', 'POST', { ...d.fields, sellerId: 'demo-seller', clientDraftId: d.localId, photoId: photo.photoId });
+export async function publishDraft(d: Draft, token: string): Promise<Listing> {
+  const photo = await json<{ photoId: string }>('/api/listing-photos', 'POST', { clientPhotoId: d.clientPhotoId, mimeType: d.photoMimeType, base64: await photoBase64(d.photoRef) }, token);
+  return json<Listing>('/api/listings', 'POST', { ...d.fields, clientDraftId: d.localId, photoId: photo.photoId }, token);
 }
 export async function getListings(q = '') { return (await json<{ listings: Listing[] }>(`/api/listings?q=${encodeURIComponent(q)}`)).listings; }
-export async function getSellerRequests() { return (await json<{ requests: OrderRequest[] }>('/api/sellers/demo-seller/requests')).requests; }
-export async function createRequest(input: { listingId: string; buyerName: string; buyerPhone: string; quantity: number }) { return json<OrderRequest>('/api/requests', 'POST', input); }
-export async function setRequestStatus(id: string, data: Record<string, unknown>) { return json<OrderRequest>(`/api/requests/${id}/status`, 'PATCH', data); }
+export async function getSellerRequests(sellerId: string, token: string) { return (await json<{ requests: OrderRequest[] }>(`/api/sellers/${encodeURIComponent(sellerId)}/requests`, 'GET', undefined, token)).requests; }
+export async function getBuyerRequests(token: string) { return (await json<{ requests: OrderRequest[] }>('/api/buyers/me/requests', 'GET', undefined, token)).requests; }
+export async function createRequest(input: { listingId: string; buyerName: string; buyerPhone: string; quantity: number }, token: string) { return json<OrderRequest>('/api/requests', 'POST', input, token); }
+export async function getRequest(id: string, token: string) { return json<OrderRequest>(`/api/requests/${encodeURIComponent(id)}`, 'GET', undefined, token); }
+export async function setRequestStatus(id: string, data: Record<string, unknown>, token: string) { return json<OrderRequest>(`/api/requests/${encodeURIComponent(id)}/status`, 'PATCH', data, token); }
 export async function getMatches(input: Record<string, unknown>) { return (await json<{ matches: Match[] }>('/api/transport/matches', 'POST', input)).matches; }
 export type Account = { id: string; role: 'seller' | 'customer'; email: string; phone: string | null; firstName: string | null; lastName: string | null; createdAt: string };
+export type AuthSession = { account: Account; token: string; expiresAt: string };
 export async function registerAccount(input: { role: Account['role']; email: string; password: string; phone?: string; firstName: string; lastName: string }) {
-  return json<{ account: Account }>('/api/auth/register', 'POST', input);
+  return json<AuthSession>('/api/auth/register', 'POST', input);
 }
 export async function loginAccount(input: { role: Account['role']; identifier: string; password: string }) {
-  return json<{ account: Account }>('/api/auth/login', 'POST', input);
+  return json<AuthSession>('/api/auth/login', 'POST', input);
 }
+export async function logoutAccount(token: string) { return json<{ status: 'ok' }>('/api/auth/logout', 'POST', undefined, token); }

@@ -1,20 +1,34 @@
 import http from 'node:http';
-import { randomUUID, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
+import { createHash, randomUUID, randomBytes, scrypt as scryptCallback, timingSafeEqual } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { dirname, resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { databasePool, usesFileAuthStore } from './db.js';
+import {
+  acceptRequestAndDecrementStock,
+  createSessionRecord,
+  createBuyerRequest,
+  createListing,
+  createListingPhoto,
+  databasePool,
+  findActiveListings,
+  findListingById,
+  findListingPhotoByClientId,
+  findListingPhotoById,
+  findListingsBySeller,
+  findRequestById,
+  findRequestsByBuyer,
+  findRequestsBySeller,
+  findSessionByTokenHash,
+  revokeSessionById,
+  updateRequestStatus,
+  usesFileAuthStore,
+} from './db.js';
 
 const PORT = Number(process.env.PORT || 4000);
 const TRANSPORT_API_BASE_URL = process.env.TRANSPORT_API_BASE_URL;
 const scrypt = promisify(scryptCallback);
 const seller = { id: 'demo-seller', name: 'Demo Kondagaon Seller', phone: '+910000000000', village: 'Kondagaon', district: 'Kondagaon' };
-const listings = new Map();
-const photos = new Map();
-const requests = new Map();
-const draftIds = new Map();
-const photoIds = new Map();
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const INDIA_PHONE = /^(?:\+91|91)?[6-9]\d{9}$/;
 
@@ -78,6 +92,16 @@ async function findLoginAccount(identifier, role) {
   );
   return result.rowCount === 1 ? result.rows[0] : null;
 }
+async function findAccountById(id) {
+  if (usesFileAuthStore()) {
+    return (await fileUsers()).find(account => account.id === id);
+  }
+  const result = await databasePool().query(
+    'SELECT id::text AS id, role, email, phone, first_name AS "firstName", last_name AS "lastName", password_salt AS salt, password_hash AS hash, created_at AS "createdAt" FROM users WHERE id = $1',
+    [id],
+  );
+  return result.rows[0];
+}
 async function passwordHash(password, salt = randomBytes(16).toString('hex')) {
   const derived = await scrypt(password, salt, 64);
   return { salt, hash: derived.toString('hex') };
@@ -90,8 +114,57 @@ function publicAccount(account) {
   return { id: account.id, role: account.role, email: account.email, phone: account.phone || null, firstName: account.firstName || null, lastName: account.lastName || null, createdAt: account.createdAt };
 }
 
+const databaseSessionStore = {
+  create: createSessionRecord,
+  findByTokenHash: findSessionByTokenHash,
+  revokeById: revokeSessionById,
+};
+const databaseMarketplaceStore = {
+  createListing,
+  createListingPhoto,
+  createBuyerRequest,
+  findActiveListings,
+  findListingById,
+  findListingPhotoByClientId,
+  findListingPhotoById,
+  findListingsBySeller,
+  findRequestById,
+  findRequestsByBuyer,
+  findRequestsBySeller,
+  updateRequestStatus,
+  acceptRequestAndDecrementStock,
+};
+const SESSION_DURATION_MS = 7 * 24 * 60 * 60 * 1000;
+
+function hashSessionToken(token) {
+  return createHash('sha256').update(token, 'utf8').digest('hex');
+}
+
+async function createSession(userId, sessionStore) {
+  const token = randomBytes(32).toString('hex');
+  const createdAt = new Date();
+  const expiresAt = new Date(createdAt.getTime() + SESSION_DURATION_MS);
+  await sessionStore.create({
+    id: randomUUID(),
+    userId,
+    tokenHash: hashSessionToken(token),
+    createdAt,
+    expiresAt,
+  });
+  return { token, expiresAt: expiresAt.toISOString() };
+}
+
+export async function verifyBearerSession(req, sessionStore = databaseSessionStore) {
+  const match = /^Bearer ([0-9a-f]{64})$/i.exec(req.headers.authorization || '');
+  if (!match) return null;
+
+  const session = await sessionStore.findByTokenHash(hashSessionToken(match[1]));
+  if (!session || session.revokedAt || new Date(session.expiresAt).getTime() <= Date.now()) return null;
+  return { id: session.id, userId: session.userId };
+}
+
 function send(res, status, data, contentType = 'application/json') {
-  res.writeHead(status, { 'Content-Type': contentType, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type' });
+  res.writeHead(status, { 'Content-Type': contentType, 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS', 'Access-Control-Allow-Headers': 'Content-Type, Authorization' });
   res.end(contentType === 'application/json' ? JSON.stringify(data) : data);
 }
 function fail(res, status, code, message) { send(res, status, { error: { code, message } }); }
@@ -105,9 +178,35 @@ async function body(req) {
 }
 function positive(n) { return typeof n === 'number' && Number.isFinite(n) && n > 0; }
 function text(v) { return typeof v === 'string' && v.trim().length > 0; }
+function uuid(v) { return typeof v === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(v); }
 function publicListing(l) { return { ...l, imageUrl: l.photoId ? `/api/photos/${l.photoId}` : null }; }
+function publicRequest(request) {
+  const visibleRequest = { ...request };
+  delete visibleRequest.buyerId;
+  return visibleRequest;
+}
+function authStorageConfigured(sessionStore) {
+  return sessionStore !== databaseSessionStore || !usesFileAuthStore();
+}
+async function requireAuthenticatedAccount(req, res, sessionStore) {
+  if (!authStorageConfigured(sessionStore)) {
+    fail(res, 503, 'AUTH_STORAGE_CONFIGURATION', 'AUTH_DATA_FILE is not supported with PostgreSQL-backed sessions; unset it to use database-backed authentication');
+    return null;
+  }
+  const session = await verifyBearerSession(req, sessionStore);
+  if (!session) {
+    fail(res, 401, 'AUTH_REQUIRED', 'A valid bearer token is required');
+    return null;
+  }
+  const account = await findAccountById(session.userId);
+  if (!account) {
+    fail(res, 401, 'AUTH_REQUIRED', 'A valid bearer token is required');
+    return null;
+  }
+  return account;
+}
 
-export async function handle(req, res) {
+export async function handle(req, res, sessionStore = databaseSessionStore, marketplaceStore = databaseMarketplaceStore) {
   if (req.method === 'OPTIONS') return send(res, 204, null);
   const url = new URL(req.url, 'http://localhost');
   const path = url.pathname;
@@ -115,6 +214,7 @@ export async function handle(req, res) {
     if (req.method === 'GET' && path === '/api/health') return send(res, 200, { status: 'ok' });
     if (req.method === 'GET' && path === '/api/demo-seller') return send(res, 200, seller);
     if (req.method === 'POST' && path === '/api/auth/register') {
+      if (!authStorageConfigured(sessionStore)) return fail(res, 503, 'AUTH_STORAGE_CONFIGURATION', 'AUTH_DATA_FILE is not supported with PostgreSQL-backed sessions; unset it to use database-backed authentication');
       const b = await body(req);
       const role = b.role === 'seller' ? 'seller' : b.role === 'customer' ? 'customer' : null;
       const email = normalizeEmail(b.email);
@@ -132,9 +232,11 @@ export async function handle(req, res) {
       const { salt, hash } = await passwordHash(password);
       const account = { id: randomUUID(), role, email, phone, firstName, lastName, salt, hash, createdAt: new Date().toISOString() };
       await saveAccount(account);
-      return send(res, 201, { account: publicAccount(account) });
+      const session = await createSession(account.id, sessionStore);
+      return send(res, 201, { account: publicAccount(account), ...session });
     }
     if (req.method === 'POST' && path === '/api/auth/login') {
+      if (!authStorageConfigured(sessionStore)) return fail(res, 503, 'AUTH_STORAGE_CONFIGURATION', 'AUTH_DATA_FILE is not supported with PostgreSQL-backed sessions; unset it to use database-backed authentication');
       const b = await body(req);
       const role = b.role === 'seller' ? 'seller' : b.role === 'customer' ? 'customer' : null;
       const identifier = String(b.identifier || b.email || '').trim();
@@ -142,71 +244,177 @@ export async function handle(req, res) {
       if (!role || (!EMAIL.test(identifier) && !(role === 'seller' && normalizePhone(identifier))) || !password) return fail(res, 400, 'INVALID_AUTH_INPUT', 'Enter a valid email or seller phone number and password');
       const account = await findLoginAccount(identifier, role);
       if (!account || !(await passwordMatches(password, account))) return fail(res, 401, 'INVALID_CREDENTIALS', 'Email, password, or account type is incorrect');
-      return send(res, 200, { account: publicAccount(account) });
+      const session = await createSession(account.id, sessionStore);
+      return send(res, 200, { account: publicAccount(account), ...session });
+    }
+    if (req.method === 'POST' && path === '/api/auth/logout') {
+      if (!authStorageConfigured(sessionStore)) return fail(res, 503, 'AUTH_STORAGE_CONFIGURATION', 'AUTH_DATA_FILE is not supported with PostgreSQL-backed sessions; unset it to use database-backed authentication');
+      const session = await verifyBearerSession(req, sessionStore);
+      if (!session) return fail(res, 401, 'AUTH_REQUIRED', 'A valid bearer token is required');
+      if (!await sessionStore.revokeById(session.id)) return fail(res, 401, 'AUTH_REQUIRED', 'A valid bearer token is required');
+      return send(res, 200, { status: 'ok' });
     }
     if (req.method === 'POST' && path === '/api/listing-photos') {
+      const account = await requireAuthenticatedAccount(req, res, sessionStore);
+      if (!account) return;
+      if (account.role !== 'seller') return fail(res, 403, 'FORBIDDEN', 'A seller account is required');
       const b = await body(req);
-      if (b.sellerId !== seller.id || !text(b.clientPhotoId) || !['image/jpeg', 'image/png', 'image/webp'].includes(b.mimeType) || !text(b.base64)) return fail(res, 400, 'INVALID_INPUT', 'A valid seller, photo ID, image type and image data are required');
+      if (!text(b.clientPhotoId) || !['image/jpeg', 'image/png', 'image/webp'].includes(b.mimeType) || !text(b.base64)) return fail(res, 400, 'INVALID_INPUT', 'A valid photo ID, image type and image data are required');
       if (!/^[A-Za-z0-9+/=]+$/.test(b.base64) || b.base64.length > 5_500_000) return fail(res, 400, 'INVALID_IMAGE', 'Invalid or oversized image');
-      const key = `${b.sellerId}:${b.clientPhotoId}`;
-      if (photoIds.has(key)) return send(res, 200, { photoId: photoIds.get(key) });
+      const existingPhoto = await marketplaceStore.findListingPhotoByClientId(account.id, b.clientPhotoId);
+      if (existingPhoto) return send(res, 200, { photoId: existingPhoto.id });
       const id = randomUUID();
-      photos.set(id, { bytes: Buffer.from(b.base64, 'base64'), mimeType: b.mimeType, sellerId: b.sellerId });
-      photoIds.set(key, id);
-      return send(res, 201, { photoId: id });
+      const photo = await marketplaceStore.createListingPhoto({
+        id,
+        sellerId: account.id,
+        clientPhotoId: b.clientPhotoId,
+        mimeType: b.mimeType,
+        imageData: Buffer.from(b.base64, 'base64'),
+      });
+      return send(res, photo.id === id ? 201 : 200, { photoId: photo.id });
     }
     const photoMatch = path.match(/^\/api\/photos\/([^/]+)$/);
     if (req.method === 'GET' && photoMatch) {
-      const p = photos.get(photoMatch[1]);
+      if (!uuid(photoMatch[1])) return fail(res, 404, 'NOT_FOUND', 'Photo not found');
+      const p = await marketplaceStore.findListingPhotoById(photoMatch[1]);
       if (!p) return fail(res, 404, 'NOT_FOUND', 'Photo not found');
-      return send(res, 200, p.bytes, p.mimeType);
+      return send(res, 200, p.imageData, p.mimeType);
     }
     if (req.method === 'POST' && path === '/api/listings') {
+      const account = await requireAuthenticatedAccount(req, res, sessionStore);
+      if (!account) return;
+      if (account.role !== 'seller') return fail(res, 403, 'FORBIDDEN', 'A seller account is required');
       const b = await body(req);
-      if (b.sellerId !== seller.id || !text(b.clientDraftId) || !text(b.title) || !text(b.category) || !positive(b.quantity) || !['kg', 'piece'].includes(b.unit) || !positive(b.unitPriceRupees) || !positive(b.estimatedWeightKgPerUnit) || !positive(b.packageLengthCmPerUnit) || !positive(b.packageWidthCmPerUnit) || !positive(b.packageHeightCmPerUnit) || !text(b.photoId) || !photos.has(b.photoId)) return fail(res, 400, 'INVALID_INPUT', 'Complete listing and photo are required');
-      const key = `${b.sellerId}:${b.clientDraftId}`;
-      if (draftIds.has(key)) return send(res, 200, publicListing(listings.get(draftIds.get(key))));
+      const photo = uuid(b.photoId) ? await marketplaceStore.findListingPhotoById(b.photoId) : null;
+      if (!text(b.clientDraftId) || !text(b.title) || !text(b.category) || !positive(b.quantity) || !['kg', 'piece'].includes(b.unit) || !positive(b.unitPriceRupees) || !positive(b.estimatedWeightKgPerUnit) || !positive(b.packageLengthCmPerUnit) || !positive(b.packageWidthCmPerUnit) || !positive(b.packageHeightCmPerUnit) || !photo || photo.sellerId !== account.id) return fail(res, 400, 'INVALID_INPUT', 'Complete listing and seller-owned photo are required');
+      const existingListings = await marketplaceStore.findListingsBySeller(account.id);
+      const existingListing = existingListings.find(listing => listing.clientDraftId === b.clientDraftId);
+      if (existingListing) return send(res, 200, publicListing(existingListing));
       const id = randomUUID();
-      const l = { id, sellerId: b.sellerId, title: b.title.trim(), category: b.category, description: String(b.description || ''), quantity: b.quantity, availableQuantity: b.quantity, unit: b.unit, unitPriceRupees: b.unitPriceRupees, estimatedWeightKgPerUnit: b.estimatedWeightKgPerUnit, packageLengthCmPerUnit: b.packageLengthCmPerUnit, packageWidthCmPerUnit: b.packageWidthCmPerUnit, packageHeightCmPerUnit: b.packageHeightCmPerUnit, village: String(b.village || seller.village), pickupLocation: b.pickupLocation || { lat: 19.5939, lng: 81.6689 }, photoId: b.photoId, status: 'active' };
-      listings.set(id, l); draftIds.set(key, id);
-      return send(res, 201, publicListing(l));
+      const l = await marketplaceStore.createListing({
+        id,
+        sellerId: account.id,
+        clientDraftId: b.clientDraftId,
+        title: b.title.trim(),
+        category: b.category,
+        description: String(b.description || ''),
+        quantity: b.quantity,
+        availableQuantity: b.quantity,
+        unit: b.unit,
+        unitPriceRupees: b.unitPriceRupees,
+        estimatedWeightKgPerUnit: b.estimatedWeightKgPerUnit,
+        packageLengthCmPerUnit: b.packageLengthCmPerUnit,
+        packageWidthCmPerUnit: b.packageWidthCmPerUnit,
+        packageHeightCmPerUnit: b.packageHeightCmPerUnit,
+        village: String(b.village || seller.village),
+        pickupLocation: b.pickupLocation || { lat: 19.5939, lng: 81.6689 },
+        photoId: b.photoId,
+        status: 'active',
+      });
+      return send(res, l.id === id ? 201 : 200, publicListing(l));
     }
     if (req.method === 'GET' && path === '/api/listings') {
-      const q = (url.searchParams.get('q') || '').toLowerCase();
-      return send(res, 200, { listings: [...listings.values()].filter(l => l.status === 'active' && l.title.toLowerCase().includes(q)).map(publicListing) });
+      const q = url.searchParams.get('q') || '';
+      return send(res, 200, { listings: (await marketplaceStore.findActiveListings(q)).map(publicListing) });
     }
     const listingMatch = path.match(/^\/api\/listings\/([^/]+)$/);
     if (req.method === 'GET' && listingMatch) {
-      const l = listings.get(listingMatch[1]);
+      if (!uuid(listingMatch[1])) return fail(res, 404, 'NOT_FOUND', 'Listing not found');
+      const l = await marketplaceStore.findListingById(listingMatch[1]);
       return l ? send(res, 200, publicListing(l)) : fail(res, 404, 'NOT_FOUND', 'Listing not found');
     }
     if (req.method === 'POST' && path === '/api/requests') {
-      const b = await body(req); const l = listings.get(b.listingId);
-      if (!l || !text(b.buyerName) || !/^\+?[0-9]{10,15}$/.test(String(b.buyerPhone || '')) || !positive(b.quantity) || b.quantity > l.availableQuantity) return fail(res, 400, 'INVALID_INPUT', 'Valid listing, buyer and available quantity are required');
-      const id = randomUUID();
-      const r = { id, listingId: l.id, sellerId: l.sellerId, buyerName: b.buyerName.trim(), buyerPhone: b.buyerPhone, sellerPhone: seller.phone, quantity: b.quantity, unit: l.unit, requestedUnitPriceRupees: l.unitPriceRupees, status: 'pending', createdAt: new Date().toISOString() };
-      requests.set(id, r); return send(res, 201, r);
+      const account = await requireAuthenticatedAccount(req, res, sessionStore);
+      if (!account) return;
+      if (account.role !== 'customer') return fail(res, 403, 'FORBIDDEN', 'A customer account is required');
+      const b = await body(req);
+      const l = uuid(b.listingId) ? await marketplaceStore.findListingById(b.listingId) : null;
+      if (!l || l.status !== 'active' || !text(b.buyerName) || !/^\+?[0-9]{10,15}$/.test(String(b.buyerPhone || '')) || !positive(b.quantity) || b.quantity > l.availableQuantity) return fail(res, 400, 'INVALID_INPUT', 'Valid listing, buyer and available quantity are required');
+      const accountName = [account.firstName, account.lastName].filter(Boolean).join(' ').trim();
+      const r = await marketplaceStore.createBuyerRequest({
+        id: randomUUID(),
+        listingId: l.id,
+        sellerId: l.sellerId,
+        buyerId: account.id,
+        productName: l.title,
+        buyerName: accountName || b.buyerName.trim(),
+        buyerPhone: b.buyerPhone,
+        sellerPhone: seller.phone,
+        quantity: b.quantity,
+        unit: l.unit,
+        requestedUnitPriceRupees: l.unitPriceRupees,
+        status: 'pending',
+      });
+      return send(res, 201, publicRequest(r));
+    }
+    if (req.method === 'GET' && path === '/api/buyers/me/requests') {
+      const account = await requireAuthenticatedAccount(req, res, sessionStore);
+      if (!account) return;
+      if (account.role !== 'customer') return fail(res, 403, 'FORBIDDEN', 'A customer account is required');
+      const buyerRequests = await marketplaceStore.findRequestsByBuyer(account.id);
+      return send(res, 200, { requests: buyerRequests.map(publicRequest) });
     }
     const requestMatch = path.match(/^\/api\/requests\/([^/]+)$/);
     if (req.method === 'GET' && requestMatch) {
-      const r = requests.get(requestMatch[1]); return r ? send(res, 200, r) : fail(res, 404, 'NOT_FOUND', 'Request not found');
+      const account = await requireAuthenticatedAccount(req, res, sessionStore);
+      if (!account) return;
+      if (!uuid(requestMatch[1])) return fail(res, 404, 'NOT_FOUND', 'Request not found');
+      const r = await marketplaceStore.findRequestById(requestMatch[1]);
+      if (!r) return fail(res, 404, 'NOT_FOUND', 'Request not found');
+      const isBuyer = account.role === 'customer' && r.buyerId === account.id;
+      const isSeller = account.role === 'seller' && r.sellerId === account.id;
+      if (!isBuyer && !isSeller) return fail(res, 404, 'NOT_FOUND', 'Request not found');
+      return send(res, 200, publicRequest(r));
     }
     const sellerRequests = path.match(/^\/api\/sellers\/([^/]+)\/requests$/);
-    if (req.method === 'GET' && sellerRequests) return send(res, 200, { requests: [...requests.values()].filter(r => r.sellerId === sellerRequests[1]) });
+    if (req.method === 'GET' && sellerRequests) {
+      const account = await requireAuthenticatedAccount(req, res, sessionStore);
+      if (!account) return;
+      if (account.role !== 'seller') return fail(res, 403, 'FORBIDDEN', 'A seller account is required');
+      if (sellerRequests[1] !== account.id) return fail(res, 404, 'NOT_FOUND', 'Seller not found');
+      const ownedRequests = (await marketplaceStore.findRequestsBySeller(account.id)).map(publicRequest);
+      return send(res, 200, { requests: ownedRequests });
+    }
     const statusMatch = path.match(/^\/api\/requests\/([^/]+)\/status$/);
     if (req.method === 'PATCH' && statusMatch) {
-      const r = requests.get(statusMatch[1]); if (!r) return fail(res, 404, 'NOT_FOUND', 'Request not found');
+      const account = await requireAuthenticatedAccount(req, res, sessionStore);
+      if (!account) return;
+      if (!uuid(statusMatch[1])) return fail(res, 404, 'NOT_FOUND', 'Request not found');
+      const r = await marketplaceStore.findRequestById(statusMatch[1]);
+      if (!r) return fail(res, 404, 'NOT_FOUND', 'Request not found');
       const b = await body(req);
+      if (!['accept', 'decline', 'withdraw'].includes(b.action)) return fail(res, 400, 'INVALID_INPUT', 'Unknown action');
+      const isBuyerWithdrawal = b.action === 'withdraw' && account.role === 'customer' && r.buyerId === account.id;
+      const isSellerDecision = (b.action === 'accept' || b.action === 'decline') && account.role === 'seller' && r.sellerId === account.id;
+      if (!isBuyerWithdrawal && !isSellerDecision) return fail(res, 404, 'NOT_FOUND', 'Request not found');
       if (r.status !== 'pending') return fail(res, 409, 'INVALID_STATE', 'Request is no longer pending');
-      if (b.action === 'withdraw' || b.action === 'decline') { r.status = b.action === 'withdraw' ? 'withdrawn' : 'declined'; return send(res, 200, r); }
-      if (b.action !== 'accept') return fail(res, 400, 'INVALID_INPUT', 'Unknown action');
-      const l = listings.get(r.listingId);
+      if (b.action === 'withdraw' || b.action === 'decline') {
+        const updatedRequest = await marketplaceStore.updateRequestStatus(r.id, {
+          status: b.action === 'withdraw' ? 'withdrawn' : 'declined',
+          expectedStatus: 'pending',
+          ...(b.action === 'withdraw' ? { buyerId: account.id } : { sellerId: account.id }),
+        });
+        if (!updatedRequest) return fail(res, 409, 'INVALID_STATE', 'Request is no longer pending');
+        return send(res, 200, publicRequest(updatedRequest));
+      }
       if (!positive(b.exactQuantity) || !positive(b.unitPriceRupees) || !positive(b.totalPriceRupees) || Math.abs(b.exactQuantity * b.unitPriceRupees - b.totalPriceRupees) > 0.01) return fail(res, 400, 'INVALID_TERMS', 'Price and quantity do not match total');
       if (b.exactQuantity !== r.quantity || b.unitPriceRupees !== r.requestedUnitPriceRupees) return fail(res, 409, 'COUNTEROFFER_REQUIRED', 'Changed terms require buyer approval in a later sprint');
-      if (l.availableQuantity < b.exactQuantity) return fail(res, 409, 'STOCK_UNAVAILABLE', 'Not enough stock');
-      l.availableQuantity -= b.exactQuantity;
-      r.status = 'accepted'; r.acceptedQuantity = b.exactQuantity; r.acceptedUnitPriceRupees = b.unitPriceRupees; r.acceptedTotalPriceRupees = b.totalPriceRupees;
-      return send(res, 200, r);
+      try {
+        const acceptedRequest = await marketplaceStore.acceptRequestAndDecrementStock({
+          requestId: r.id,
+          sellerId: account.id,
+          acceptedQuantity: b.exactQuantity,
+          acceptedUnitPriceRupees: b.unitPriceRupees,
+          acceptedTotalPriceRupees: b.totalPriceRupees,
+        });
+        if (!acceptedRequest) return fail(res, 404, 'NOT_FOUND', 'Request not found');
+        return send(res, 200, publicRequest(acceptedRequest));
+      } catch (error) {
+        if (error.code === 'STOCK_UNAVAILABLE') return fail(res, 409, 'STOCK_UNAVAILABLE', 'Not enough stock');
+        if (error.code === 'REQUEST_NOT_PENDING') return fail(res, 409, 'INVALID_STATE', 'Request is no longer pending');
+        if (error.code === 'INVALID_ACCEPTED_TERMS') return fail(res, 409, 'COUNTEROFFER_REQUIRED', 'Changed terms require buyer approval in a later sprint');
+        throw error;
+      }
     }
     if (req.method === 'POST' && path === '/api/transport/matches') {
       const b = await body(req);
@@ -236,5 +444,9 @@ export async function handle(req, res) {
   }
 }
 
-export const server = http.createServer(handle);
+export function createServer(sessionStore = databaseSessionStore, marketplaceStore = databaseMarketplaceStore) {
+  return http.createServer((req, res) => handle(req, res, sessionStore, marketplaceStore));
+}
+
+export const server = createServer();
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) server.listen(PORT, '0.0.0.0', () => console.log(`Marketplace API on ${PORT}`));

@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { router } from 'expo-router';
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
-import { displayError, loginAccount, registerAccount, type Account } from './api';
+import { displayError, loginAccount, registerAccount, type Account, type AuthSession } from './api';
 import type { Key } from './i18n';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const INDIA_PHONE = /^(?:\+91|91)?[6-9]\d{9}$/;
 type Role = Account['role'];
 type Mode = 'login' | 'register';
-type Props = { t: (key: Key) => string; onSignIn: (account: Account) => void };
+type Props = { t: (key: Key) => string; onSignIn: (session: AuthSession) => void };
 
 export function AuthScreen({ t, onSignIn }: Props) {
   const [role, setRole] = useState<Role>('customer');
@@ -41,9 +41,9 @@ export function AuthScreen({ t, onSignIn }: Props) {
       const response = mode === 'register'
         ? await registerAccount({ role, email: cleanEmail, password, firstName: cleanFirstName, lastName: cleanLastName, ...(isSeller ? { phone: cleanPhone } : {}) })
         : await loginAccount({ role, identifier: cleanEmail, password });
-      onSignIn(response.account);
+      onSignIn(response);
       setMessage(t('authSuccess') + ' ' + response.account.email);
-      router.replace(isSeller ? '/seller' : '/');
+      router.replace(isSeller ? '/seller' : '/buyer');
     } catch (error) {
       setMessage(displayError(error, t));
     } finally {

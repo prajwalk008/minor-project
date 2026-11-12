@@ -3,6 +3,7 @@ import { getListings, getSellerRequests, publishDraft } from '../api';
 import { loadDrafts, putDraft, removeDraft } from '../draftStore';
 import { deletePhoto } from '../photoStore';
 import type { Draft, Listing, OrderRequest } from '../types';
+import { useAppState } from '../app/_layout';
 
 type SellerState = {
   drafts: Draft[];
@@ -22,6 +23,7 @@ export function useSeller(): SellerState {
   return value;
 }
 export function SellerProvider({ children, onPublished }: { children: React.ReactNode; onPublished: () => void }) {
+  const { account, token } = useAppState();
   const [drafts, setDrafts] = useState<Draft[]>([]);
   const [listings, setListings] = useState<Listing[]>([]);
   const [requests, setRequests] = useState<OrderRequest[]>([]);
@@ -31,21 +33,28 @@ export function SellerProvider({ children, onPublished }: { children: React.Reac
   useEffect(() => {
     let active = true;
     loadDrafts().then(items => { if (active) setDrafts(items); }).catch(() => {});
-    Promise.all([getListings(), getSellerRequests()])
+    if (!token || account?.role !== 'seller') {
+      return () => { active = false; };
+    }
+    Promise.all([getListings(), getSellerRequests(account.id, token)])
       .then(([items, orders]) => {
         if (!active) return;
-        setListings(items.filter(item => item.sellerId === 'demo-seller'));
+        setListings(items.filter(item => item.sellerId === account.id));
         setRequests(orders);
         setRemoteAvailable(true);
       })
       .catch(() => { if (active) setRemoteAvailable(false); });
     return () => { active = false; };
-  }, []);
+  }, [account?.id, account?.role, token]);
   const refreshDrafts = async () => setDrafts(await loadDrafts());
   const refreshRemote = async () => {
+    if (!token || account?.role !== 'seller') {
+      setRemoteAvailable(false);
+      return;
+    }
     try {
-      const [items, orders] = await Promise.all([getListings(), getSellerRequests()]);
-      setListings(items.filter(item => item.sellerId === 'demo-seller'));
+      const [items, orders] = await Promise.all([getListings(), getSellerRequests(account.id, token)]);
+      setListings(items.filter(item => item.sellerId === account.id));
       setRequests(orders);
       setRemoteAvailable(true);
     } catch {
@@ -54,6 +63,10 @@ export function SellerProvider({ children, onPublished }: { children: React.Reac
   };
   const syncDrafts = async () => {
     if (syncing) return;
+    if (!token || account?.role !== 'seller') {
+      setNotice('uploadFailed');
+      return;
+    }
     setSyncing(true);
     let failed = false;
     let uploaded = false;
@@ -61,7 +74,7 @@ export function SellerProvider({ children, onPublished }: { children: React.Reac
       for (const draft of await loadDrafts()) {
         try {
           await putDraft({ ...draft, status: 'uploading' });
-          await publishDraft(draft);
+          await publishDraft(draft, token);
           await removeDraft(draft.localId);
           await deletePhoto(draft.photoRef);
           uploaded = true;

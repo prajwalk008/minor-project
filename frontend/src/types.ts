@@ -7,5 +7,22 @@ export type ListingInput = {
 };
 export type Draft = { localId: string; clientPhotoId: string; photoRef: string; photoMimeType: string; fields: ListingInput; status: 'draft' | 'queued' | 'uploading' | 'failed' | 'published'; error?: string };
 export type Listing = ListingInput & { id: string; sellerId: string; availableQuantity: number; imageUrl: string | null; status: string };
-export type OrderRequest = { id: string; listingId: string; sellerId: string; buyerName: string; buyerPhone: string; sellerPhone: string; quantity: number; unit: string; requestedUnitPriceRupees: number; status: 'pending' | 'accepted' | 'declined' | 'withdrawn'; acceptedTotalPriceRupees?: number };
+export type OrderRequest = {
+  id: string;
+  listingId: string;
+  sellerId: string;
+  productName?: string;
+  buyerName: string;
+  buyerPhone: string;
+  sellerPhone: string;
+  quantity: number;
+  unit: string;
+  requestedUnitPriceRupees: number;
+  status: 'pending' | 'accepted' | 'declined' | 'withdrawn';
+  createdAt?: string;
+  updatedAt?: string;
+  acceptedQuantity?: number;
+  acceptedUnitPriceRupees?: number;
+  acceptedTotalPriceRupees?: number;
+};
 export type Match = { tripId: string; transporterName: string; transporterPhone: string; vehicleType: string; availableCapacityKg: number; departAt: string; routeSummary: string; pickupPoint: Coordinate & { name: string }; dropPoint: Coordinate & { name: string }; pickupDistanceKm: number; dropDistanceKm: number; sharedRouteKm: number; fitStatus: string; explanation: string };

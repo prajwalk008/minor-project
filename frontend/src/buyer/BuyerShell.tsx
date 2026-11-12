@@ -6,19 +6,22 @@ import { localeLabels, type Key, type Locale } from '../i18n';
 import { useAppState } from '../app/_layout';
 import { buyerStyles as s } from './BuyerStyles';
 
-const navigation: { href: '/' | '/transport' | '/profile'; key: Key; glyph: string }[] = [
-  { href: '/', key: 'dashboard', glyph: '▦' },
+const navigation: { href: '/buyer' | '/buyer/requests' | '/browse' | '/transport' | '/profile'; key: Key; glyph: string }[] = [
+  { href: '/buyer', key: 'dashboard', glyph: '▦' },
+  { href: '/buyer/requests', key: 'myRequestsNav', glyph: '☷' },
+  { href: '/browse', key: 'browseProducts', glyph: '◫' },
   { href: '/transport', key: 'transport', glyph: '↗' },
   { href: '/profile', key: 'viewProfile', glyph: '◉' },
 ];
 
 function NavItem({ item, active, compact }: { item: typeof navigation[number]; active: boolean; compact: boolean }) {
-  const { t } = useAppState();
+  const { t, account } = useAppState();
+  const href = item.href === '/buyer' && !account ? '/' : item.href;
   return (
     <Pressable
       accessibilityRole="link"
       accessibilityState={{ selected: active }}
-      onPress={() => router.navigate(item.href)}
+      onPress={() => router.navigate(href)}
       style={compact ? [s.mobileNavItem, active && s.mobileNavActive] : [s.navItem, active && s.navItemActive]}
     >
       {!compact && <Text style={[s.navIcon, active && s.navIconActive]}>{item.glyph}</Text>}
@@ -69,7 +72,7 @@ export function BuyerShell({ children }: { children: React.ReactNode }) {
       {!wide && (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={s.mobileNav} contentContainerStyle={s.mobileNavInner}>
           {navigation.map(item => (
-            <NavItem key={item.href} item={item} active={pathname === item.href} compact />
+            <NavItem key={item.href} item={item} active={pathname === item.href || (item.href === '/buyer/requests' && pathname.startsWith('/buyer/request/'))} compact />
           ))}
         </ScrollView>
       )}
@@ -78,7 +81,7 @@ export function BuyerShell({ children }: { children: React.ReactNode }) {
           <View style={s.sidebar}>
             <Text style={s.sideHeading}>{t('buyer')}</Text>
             {navigation.map(item => (
-              <NavItem key={item.href} item={item} active={pathname === item.href} compact={false} />
+              <NavItem key={item.href} item={item} active={pathname === item.href || (item.href === '/buyer/requests' && pathname.startsWith('/buyer/request/'))} compact={false} />
             ))}
           </View>
         )}

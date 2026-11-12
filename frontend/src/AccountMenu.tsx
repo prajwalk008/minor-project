@@ -3,8 +3,9 @@ import { Image, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
 import type { Account } from './api';
 import type { Key } from './i18n';
+import { showAlert } from './ui';
 
-export function AccountMenu({ account, logOut, t }: { account: Account | null; logOut: () => void; t: (key: Key) => string }) {
+export function AccountMenu({ account, logOut, t }: { account: Account | null; logOut: () => Promise<void>; t: (key: Key) => string }) {
   const [open, setOpen] = useState(false);
   if (!account) return <Pressable accessibilityRole="button" onPress={() => router.navigate('/auth')} style={styles.login}>
     <Text style={styles.label}>{t('registerLogin')}</Text>
@@ -18,7 +19,7 @@ export function AccountMenu({ account, logOut, t }: { account: Account | null; l
         <View style={styles.menu}>
           <Text style={styles.email}>{account.email}</Text>
           <Pressable accessibilityRole="button" onPress={() => { setOpen(false); router.navigate('/profile'); }} style={styles.item}><Text style={styles.label}>{t('viewProfile')}</Text></Pressable>
-          <Pressable accessibilityRole="button" onPress={() => { setOpen(false); logOut(); }} style={styles.item}><Text style={styles.label}>{t('logOut')}</Text></Pressable>
+          <Pressable accessibilityRole="button" onPress={() => { setOpen(false); void logOut().catch(() => showAlert(t('error'), t('error'))); }} style={styles.item}><Text style={styles.label}>{t('logOut')}</Text></Pressable>
         </View>
       </Pressable>
     </Modal>

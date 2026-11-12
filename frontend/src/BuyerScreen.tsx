@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Pressable, Text, TextInput, useWindowDimensions, View } from 'react-native';
 import { router } from 'expo-router';
-import { API, createRequest, displayError, getListings, setRequestStatus } from './api';
+import { API, createRequest, displayError, getListings, getRequest, setRequestStatus, type Account } from './api';
 import type { Key } from './i18n';
 import type { Listing, OrderRequest } from './types';
 import { Action, EmptyState, Money, PageHeader, StatusBadge } from './seller/SellerUI';
 import { buyerStyles as s } from './buyer/BuyerStyles';
 import { showAlert } from './ui';
 
-type Props = { t: (key: Key) => string; version: number; onTransport: (listing: Listing) => void };
+type Props = {
+  t: (key: Key) => string;
+  version: number;
+  onTransport: (listing: Listing) => void;
+  account: Account | null;
+  token: string | null;
+  mode?: 'dashboard' | 'browse';
+};
 
 function ProductCard({
   listing,
@@ -57,7 +64,7 @@ function ProductCard({
   );
 }
 
-export function BuyerScreen({ t, version, onTransport }: Props) {
+export function BuyerScreen({ t, version, onTransport, account, token, mode = 'dashboard' }: Props) {
   const [listings, setListings] = useState<Listing[]>([]);
   const [q, setQ] = useState('');
   const [selected, setSelected] = useState<Listing | null>(null);
@@ -104,7 +111,21 @@ export function BuyerScreen({ t, version, onTransport }: Props) {
     }
   };
 
+  const startOrder = (listing: Listing) => {
+    if (!token || account?.role !== 'customer') {
+      router.navigate('/auth');
+      return;
+    }
+    setSelected(listing);
+    setQuantity(1);
+    setRequestError('');
+  };
+
   const send = async () => {
+    if (!token || account?.role !== 'customer') {
+      router.navigate('/auth');
+      return;
+    }
     if (!selected || !buyerName.trim() || !/^\+?[0-9]{10,15}$/.test(buyerPhone) || !Number.isFinite(quantity) || quantity <= 0) {
       showAlert(t('invalid'));
       return;
@@ -112,7 +133,7 @@ export function BuyerScreen({ t, version, onTransport }: Props) {
     setBusy(true);
     setRequestError('');
     try {
-      setRequest(await createRequest({ listingId: selected.id, buyerName, buyerPhone, quantity }));
+      setRequest(await createRequest({ listingId: selected.id, buyerName, buyerPhone, quantity }, token));
     } catch (error) {
       setRequestError(displayError(error, t));
     } finally {
@@ -122,14 +143,16 @@ export function BuyerScreen({ t, version, onTransport }: Props) {
 
   const refreshRequest = async () => {
     if (!request) return;
+    if (!token || account?.role !== 'customer') {
+      setRequestError(t('error'));
+      return;
+    }
     setRequestBusy(true);
     setRequestError('');
     try {
-      const response = await fetch(`${API}/api/requests/${request.id}`);
-      if (!response.ok) throw new Error('Request refresh failed');
-      setRequest(await response.json() as OrderRequest);
-    } catch {
-      setRequestError(t('error'));
+      setRequest(await getRequest(request.id, token));
+    } catch (error) {
+      setRequestError(displayError(error, t));
     } finally {
       setRequestBusy(false);
     }
@@ -137,10 +160,14 @@ export function BuyerScreen({ t, version, onTransport }: Props) {
 
   const withdraw = async () => {
     if (!request) return;
+    if (!token || account?.role !== 'customer') {
+      setRequestError(t('error'));
+      return;
+    }
     setRequestBusy(true);
     setRequestError('');
     try {
-      setRequest(await setRequestStatus(request.id, { action: 'withdraw' }));
+      setRequest(await setRequestStatus(request.id, { action: 'withdraw' }, token));
     } catch (error) {
       setRequestError(displayError(error, t));
     } finally {
@@ -155,19 +182,25 @@ export function BuyerScreen({ t, version, onTransport }: Props) {
 
   return (
     <View>
-      <View style={s.hero}>
-        <View style={s.heroCopy}>
-          <Text style={s.heroKicker}>{t('buyer')}</Text>
-          <Text style={s.heroTitle}>{t('buyerWelcome')}</Text>
-          <Text style={s.heroText}>{t('buyerIntro')}</Text>
+      {mode === 'dashboard' && (
+        <View style={s.hero}>
+          <View style={s.heroCopy}>
+            <Text style={s.heroKicker}>{t('buyer')}</Text>
+            <Text style={s.heroTitle}>{t('buyerWelcome')}</Text>
+            <Text style={s.heroText}>{t('buyerIntro')}</Text>
+          </View>
+          <View style={s.heroActions}>
+            <Action label={t('findProductsAction')} onPress={() => { void refresh(); }} />
+            <Action label={t('transportAction')} onPress={findTransport} secondary />
+          </View>
         </View>
-        <View style={s.heroActions}>
-          <Action label={t('findProductsAction')} onPress={() => { void refresh(); }} />
-          <Action label={t('transportAction')} onPress={findTransport} secondary />
-        </View>
-      </View>
+      )}
 
-      <PageHeader kicker={t('products')} title={t('featuredProducts')} subtitle={t('buyerBrowseSubtitle')} />
+      <PageHeader
+        kicker={t('products')}
+        title={t(mode === 'browse' ? 'browseProducts' : 'featuredProducts')}
+        subtitle={t('buyerBrowseSubtitle')}
+      />
       <View style={s.searchPanel}>
         <TextInput
           value={q}
@@ -218,7 +251,7 @@ export function BuyerScreen({ t, version, onTransport }: Props) {
               listing={listing}
               t={t}
               compact={compact}
-              onOrder={() => { setSelected(listing); setQuantity(1); setRequestError(''); }}
+              onOrder={() => startOrder(listing)}
               onTransport={() => onTransport(listing)}
             />
           ))}

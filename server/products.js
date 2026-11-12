@@ -8,7 +8,12 @@ export async function getProductSummaries(ids) {
       (SELECT AVG(r.rating)::float FROM product_reviews r WHERE r.listing_id = l.id) AS "averageRating",
       (SELECT COUNT(*)::int FROM product_reviews r WHERE r.listing_id = l.id) AS "reviewCount",
       COALESCE((SELECT SUM(o.accepted_quantity)::float FROM requests o
-        WHERE o.listing_id = l.id AND o.status = 'completed'), 0) AS "unitsSold"
+        WHERE o.listing_id = l.id AND o.status = 'completed'), 0) AS "unitsSold",
+      (SELECT COALESCE(json_agg('/api/photos/' || g.photo_id ORDER BY g.position), '[]'::json)
+        FROM listing_gallery g WHERE g.listing_id = l.id) AS "imageUrls",
+      (SELECT COALESCE(json_agg(json_build_object('sourceUrl', g.source_url, 'author', g.author,
+        'license', g.license, 'licenseUrl', g.license_url, 'illustrative', g.illustrative) ORDER BY g.position), '[]'::json)
+        FROM listing_gallery g WHERE g.listing_id = l.id) AS "imageCredits"
     FROM listings l JOIN users u ON u.id = l.seller_id WHERE l.id = ANY($1::uuid[])`, [ids]);
   return result.rows;
 }

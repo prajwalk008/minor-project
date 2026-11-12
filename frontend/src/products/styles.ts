@@ -24,8 +24,9 @@ export const productStyles = StyleSheet.create({
   avatar: { width: 32, height: 32, borderRadius: 16, backgroundColor: '#EAF0F5', color: '#46637D', textAlign: 'center', lineHeight: 32, fontWeight: '700' },
   badge: { color: '#167448', fontSize: 12, fontWeight: '700' }, reviewImage: { width: 100, height: 100, borderRadius: 8, backgroundColor: '#EEF2F6' },
   error: { color: '#B42318', fontSize: 13, lineHeight: 21 }, success: { color: '#167448', fontSize: 14, lineHeight: 22 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16 },
-  card: { width: 235, flexGrow: 1, maxWidth: 340, borderRadius: 13, overflow: 'hidden', backgroundColor: '#FFF', borderWidth: 1, borderColor: '#DFE6ED' },
-  cardImage: { width: '100%', height: 190, backgroundColor: '#F3F5F7' }, cardBody: { padding: 16, gap: 8 },
-  cardTitle: { color: '#172B44', fontSize: 16, lineHeight: 23, fontWeight: '700' }, cardPrice: { color: '#172B44', fontSize: 22, fontWeight: '800' },
+  grid: { width: '100%', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'stretch', gap: 16 },
+  card: { width: '100%', minWidth: 0, flex: 1, minHeight: 446, borderRadius: 13, overflow: 'hidden', backgroundColor: '#FFF', borderWidth: 1, borderColor: '#DFE6ED' },
+  cardImage: { width: '100%', height: 190, backgroundColor: '#F3F5F7' }, cardBody: { padding: 16, gap: 8, flex: 1 },
+  cardTitle: { color: '#172B44', fontSize: 16, lineHeight: 23, minHeight: 46, fontWeight: '700' }, cardPrice: { color: '#172B44', fontSize: 22, lineHeight: 30, fontWeight: '800' },
+  thumbnail: { width: 64, height: 64, borderRadius: 8, borderWidth: 2, borderColor: '#DFE6ED', overflow: 'hidden', backgroundColor: '#FFF' },
 });

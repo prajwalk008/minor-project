@@ -57,6 +57,14 @@ test('PostgreSQL migrations, concurrent stock acceptance, completion and review 
     const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+j5ioAAAAASUVORK5CYII=', 'base64');
     const photo = await createListingPhoto({ id: randomUUID(), sellerId, clientPhotoId: 'photo', mimeType: 'image/png', imageData: png });
     const listing = await createListing({ id: randomUUID(), sellerId, clientDraftId: 'draft', title: 'Handmade bowl', description: '', category: 'handicraft', quantity: 4, unit: 'piece', unitPriceRupees: 250, estimatedWeightKgPerUnit: 1, packageLengthCmPerUnit: 10, packageWidthCmPerUnit: 10, packageHeightCmPerUnit: 10, village: 'Kondagaon', pickupLocation: { lat: 19.59, lng: 81.66 }, photoId: photo.id });
+    const alternatePhoto = await createListingPhoto({ id: randomUUID(), sellerId, clientPhotoId: 'alternate-photo', mimeType: 'image/png', imageData: png });
+    await db.query(`INSERT INTO listing_gallery (listing_id, photo_id, position, source_url, author, license, illustrative)
+      VALUES ($1, $2, 0, 'https://commons.wikimedia.org/example', 'Test photographer', 'CC0', TRUE),
+             ($1, $3, 1, 'https://commons.wikimedia.org/another-example', 'Another photographer', 'CC BY 4.0', TRUE)`, [listing.id, photo.id, alternatePhoto.id]);
+    const gallery = (await getProductSummaries([listing.id]))[0];
+    assert.deepEqual(gallery.imageUrls, [`/api/photos/${photo.id}`, `/api/photos/${alternatePhoto.id}`]);
+    assert.equal(gallery.imageCredits[1].author, 'Another photographer');
+    assert.equal(gallery.imageCredits[0].illustrative, true);
     const order = async (buyer, quantity) => createBuyerRequest({ id: randomUUID(), listingId: listing.id, sellerId, buyerId: buyer, productName: listing.title, buyerName: 'Buyer Test', buyerPhone: '+919876543211', sellerPhone: '+919876543210', quantity, unit: 'piece', requestedUnitPriceRupees: 250 });
     const orders = await Promise.all([order(buyerId, 3), order(buyerId, 3)]);
     const attempts = await Promise.allSettled(orders.map(request => acceptRequestAndDecrementStock({ requestId: request.id, sellerId, acceptedQuantity: 3, acceptedUnitPriceRupees: 250, acceptedTotalPriceRupees: 750 })));

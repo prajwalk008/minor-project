@@ -33,7 +33,8 @@ Registered accounts and seven-day bearer sessions are stored in the configured S
 
 ## Product pages and reviews
 
-- Every product card opens `/product/:id`, with a large image, product name, linked seller name, average customer rating, received units sold, price, optional seller description, stock and a dedicated order panel.
+- Every product card opens `/product/:id`, with a large image, thumbnail gallery when available, product name, linked seller name, average customer rating, received units sold, price, optional seller description, stock and a dedicated order panel. Product grids measure their available width to keep columns equal; titles reserve two lines so prices and stock align.
+- The 30 promoted sample products have two sourced illustrative images each, stored in PostgreSQL with source credits. The gallery displays attribution links and a sample-image notice. See [sample image scripts and sources](scripts/sample-images/README.md). Existing seller-created listings retain their original single photo unless a gallery is attached; multiple-photo management in the seller upload form remains future work.
 - `/sellers/:id` is a public seller profile with the seller's name, join date and active products. It does not expose account email, phone or credentials.
 - Suggestions prefer other in-stock products in the same category, then other marketplace products. They exclude the current product; no simulated recommendations or sales figures are inserted.
 - Buyers send order requests from the product page, then follow the confirmation link to request details. Seller acceptance reduces stock atomically. Once the goods arrive, the owning buyer can **Confirm received** in **My requests → Request details**. This moves the request from `accepted` to `completed` without reducing stock again.

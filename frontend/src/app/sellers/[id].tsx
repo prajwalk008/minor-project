@@ -6,7 +6,7 @@ import type { Listing, PublicSeller } from '../../types';
 import { useAppState } from '../_layout';
 import { dictionaries, en, type Key } from '../../i18n';
 import { Action } from '../../seller/SellerUI';
-import { ProductCard } from '../../products/ProductCard';
+import { ProductGrid } from '../../products/ProductGrid';
 import { productStyles as s } from '../../products/styles';
 
 export default function SellerProfileRoute() {
@@ -29,7 +29,7 @@ export default function SellerProfileRoute() {
         <Text style={s.text}>{[...new Set(data.listings.map(item => item.village))].join(' · ')}</Text>
       </View>
       <Text style={s.heading}>{t('sellerProducts')}</Text>
-      <View style={s.grid}>{data.listings.map(item => <ProductCard key={item.id} listing={item} t={t} />)}</View>
+      <ProductGrid listings={data.listings} t={t} />
       {!data.listings.length && <Text style={s.muted}>{t('noProducts')}</Text>}
     </>}
   </View>;

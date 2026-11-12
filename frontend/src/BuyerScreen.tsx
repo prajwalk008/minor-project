@@ -6,8 +6,7 @@ import type { Key } from './i18n';
 import type { Listing } from './types';
 import { Action, EmptyState, PageHeader } from './seller/SellerUI';
 import { buyerStyles as s } from './buyer/BuyerStyles';
-import { productStyles } from './products/styles';
-import { ProductCard } from './products/ProductCard';
+import { ProductGrid } from './products/ProductGrid';
 
 type Props = { t: (key: Key) => string; version: number; onTransport: (listing: Listing) => void; account: Account | null; token: string | null; mode?: 'dashboard' | 'browse' };
 export function BuyerScreen({ t, version, mode = 'dashboard' }: Props) {
@@ -39,6 +38,6 @@ export function BuyerScreen({ t, version, mode = 'dashboard' }: Props) {
     {loading ? <View style={s.stateCard}><ActivityIndicator /><Text>{t('loadingProducts')}</Text></View>
       : error ? <View style={s.stateCard}><EmptyState title={t('error')} detail={error} action={<Action label={t('retry')} onPress={() => void search()} />} /></View>
       : !listings.length ? <View style={s.stateCard}><EmptyState title={t('noProducts')} detail={t('noSearchResultsHelp')} /></View>
-      : <View style={productStyles.grid}>{listings.map(item => <ProductCard key={item.id} listing={item} t={t} />)}</View>}
+      : <ProductGrid listings={listings} t={t} />}
   </View>;
 }

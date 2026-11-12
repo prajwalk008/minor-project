@@ -1,4 +1,5 @@
 export const productEn = {
+  samplePhotoNotice: 'Illustrative sample photos', photoCredits: 'Photo credits', productPhoto: 'Product photo',
   productPage: 'Product details', soldBy: 'Sold by', noRatings: 'No ratings yet', reviewsLabel: 'ratings',
   unitsSold: 'sold', aboutProduct: 'About this product', noProductInfo: 'The seller has not added further product information.',
   suggestedProducts: 'You may also like', customerReviews: 'Customer reviews', noReviews: 'Be the first customer to review this product.',
@@ -21,6 +22,7 @@ export const productEn = {
 };
 
 export const productHi: Record<keyof typeof productEn, string> = {
+  samplePhotoNotice: 'उदाहरण के लिए उत्पाद तस्वीरें', photoCredits: 'तस्वीरों का श्रेय', productPhoto: 'उत्पाद की तस्वीर',
   productPage: 'उत्पाद विवरण', soldBy: 'विक्रेता', noRatings: 'अभी कोई रेटिंग नहीं', reviewsLabel: 'रेटिंग',
   unitsSold: 'बिके', aboutProduct: 'इस उत्पाद के बारे में', noProductInfo: 'विक्रेता ने अतिरिक्त जानकारी नहीं दी है।',
   suggestedProducts: 'आपको ये भी पसंद आ सकते हैं', customerReviews: 'ग्राहकों की समीक्षाएँ', noReviews: 'इस उत्पाद की पहली समीक्षा लिखें।',

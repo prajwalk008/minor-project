@@ -1,0 +1,277 @@
+{
+  "at": "2026-11-12T19:20:30.174Z",
+  "schema": "public",
+  "products": [
+    {
+      "id": "0101ef47-c863-4895-bd66-bd302f80ba91",
+      "title": "Iron Wall-Mounted Utility Hook Set",
+      "previousCoverPhotoId": "ecbd6e09-b0fe-4811-9753-aefe65d117c0",
+      "imageIds": [
+        "60e0dc56-9d96-4e02-a79a-70402f73fe0e",
+        "dd75e1de-6e3b-4426-af8e-3e89b2e71488"
+      ]
+    },
+    {
+      "id": "3d4cddc4-f770-41cd-9e68-2728d76f6c8e",
+      "title": "Red Carrots",
+      "previousCoverPhotoId": "452d1782-8520-47cc-8bc3-601b8558da5d",
+      "imageIds": [
+        "bd56c1b9-4783-44bd-a19d-48e923b62e1e",
+        "79e7e0cb-76fa-435b-8a60-ae1364142ea0"
+      ]
+    },
+    {
+      "id": "8bb79e27-8c36-41df-ac28-9836df78866c",
+      "title": "Fresh Green Peas",
+      "previousCoverPhotoId": "2c890b97-2d33-4358-9e3f-ebee17d814fc",
+      "imageIds": [
+        "6e596501-2c94-48a5-a182-09eca13729eb",
+        "34fde485-16fa-4132-9f7b-f27c4d813d45"
+      ]
+    },
+    {
+      "id": "a723e17a-fd93-433c-bcbe-cda5c914f11b",
+      "title": "Sal Leaf Serving Bowl Set",
+      "previousCoverPhotoId": "34e37d2b-df98-40c2-b908-8ff6874e24ac",
+      "imageIds": [
+        "49f36820-e86f-4760-ac6a-1a5145eae29e",
+        "6fa79de5-5fe1-4067-9b46-c32f80616910"
+      ]
+    },
+    {
+      "id": "0f03b916-9b9c-4164-b846-aafcd0cd86f7",
+      "title": "Handwoven Cotton Floor Duster",
+      "previousCoverPhotoId": "d8eb09e5-c14b-411b-a1a8-0977f9af9106",
+      "imageIds": [
+        "d3cc9621-fc4f-4b18-8dc2-91c3c9ad456b",
+        "99804107-a802-4da3-82f4-3cca3925cc35"
+      ]
+    },
+    {
+      "id": "c33e7f93-a80c-43a1-9216-4698a8479a3a",
+      "title": "Sal Wood Kitchen Serving Tray",
+      "previousCoverPhotoId": "3448b127-cfac-476e-842c-7754a46d578d",
+      "imageIds": [
+        "c118e872-f0d0-4f0a-a3ce-c5626cf93eec",
+        "18bdf130-2ff4-44a3-9164-dfcc3a52a3bc"
+      ]
+    },
+    {
+      "id": "5f9b8d34-3ceb-4531-adff-ee1ffd66a529",
+      "title": "Kulthi Horse Gram",
+      "previousCoverPhotoId": "dbce56e0-f58b-43ee-9e74-c4fd8cc395e8",
+      "imageIds": [
+        "1bd0f189-9126-4bb5-8b6a-af305bb61e17",
+        "8943dbe7-4141-43c2-bb43-1eeda5d99fa7"
+      ]
+    },
+    {
+      "id": "9d347cc8-f049-4f35-b5b4-7462fa58c30d",
+      "title": "Fresh Cauliflower",
+      "previousCoverPhotoId": "d2b358bc-7577-43dc-b1c6-a50eb486adb7",
+      "imageIds": [
+        "f70e199f-0ba0-46fa-aff5-3dc6e603bc8a",
+        "f317db50-15e7-48ec-a27f-6aaddac9eefe"
+      ]
+    },
+    {
+      "id": "1ea35549-85de-4e49-a4a7-6b73d997be7a",
+      "title": "Hand-Forged Garden Hoe",
+      "previousCoverPhotoId": "d0045103-2590-4f76-8ea5-d7201b0a671e",
+      "imageIds": [
+        "b9bd1131-c253-4783-bf2b-d91dd8e5f79f",
+        "4701ed41-daff-450f-913a-327a7316e032"
+      ]
+    },
+    {
+      "id": "3cba8044-7bfb-4095-ac9c-7cd9f1ecc661",
+      "title": "Little Millet Grain",
+      "previousCoverPhotoId": "0311f011-02f0-43d5-a499-1ade34f552e1",
+      "imageIds": [
+        "12229e2a-edbf-4661-846e-6dee5e963609",
+        "f4f7a2eb-219f-49ec-8142-e52749a7cce3"
+      ]
+    },
+    {
+      "id": "04346d6b-90f9-4e6e-a5dd-c04c6819319f",
+      "title": "Kodo Millet Grain",
+      "previousCoverPhotoId": "8e580c3a-b029-49a4-be66-65a54f1f0922",
+      "imageIds": [
+        "ed38302e-0d78-4e7c-850c-c49c69bfdd6c",
+        "c0b3a0bd-c11b-43fd-a752-2e4cc709d2b1"
+      ]
+    },
+    {
+      "id": "c3edc05e-9edb-4833-ac18-14d7f0577c1a",
+      "title": "Handcrafted Terracotta Serving Bowl",
+      "previousCoverPhotoId": "04e08349-0952-4ab8-9b7b-34deec50a9a9",
+      "imageIds": [
+        "3a4d0571-aa96-4c49-af4a-b61fe5a21136",
+        "58120c4f-e14f-47dc-99bc-a50058604d3e"
+      ]
+    },
+    {
+      "id": "4a03369d-2735-4226-9fb3-94b30a2876a6",
+      "title": "Terracotta Diya Set of Six",
+      "previousCoverPhotoId": "141ab4ef-bdd5-4a18-a5b6-4b85856aafa2",
+      "imageIds": [
+        "e89e98a2-6301-4bda-8537-a3ae78f9ee47",
+        "72a3aac2-3c46-4bc0-8c84-b5fab47e60a0"
+      ]
+    },
+    {
+      "id": "8614aa78-0f8f-48f6-b588-f450413db3e3",
+      "title": "Handwoven Cotton Table Runner",
+      "previousCoverPhotoId": "21a47eb9-98e5-414f-8178-78175dfee646",
+      "imageIds": [
+        "a925d0f8-a122-4238-90c6-0472c633aca7",
+        "458efba7-9eba-474a-917b-ecb2b3f2b800"
+      ]
+    },
+    {
+      "id": "c64f58bd-19d7-4c04-9585-804997dc3bd2",
+      "title": "Kosa Silk Stole with Woven Border",
+      "previousCoverPhotoId": "e72f4798-8e32-4c4b-85cf-585a13a4f53a",
+      "imageIds": [
+        "cecbeab6-3f46-4ac4-9ef3-b40361291cf1",
+        "caa69b0a-e9a8-4aa1-9cad-6ea52cdbf04b"
+      ]
+    },
+    {
+      "id": "94a37334-ddd6-4ae6-a2d9-f449647f7113",
+      "title": "Wild Forest Tamarind Pulp",
+      "previousCoverPhotoId": "d4fe5f5f-baa3-42b7-9333-3e73a1264cd8",
+      "imageIds": [
+        "84557a9f-5fa8-44fe-9388-7468fb16cec7",
+        "9c675544-fe9b-4396-9768-ad3059dec152"
+      ]
+    },
+    {
+      "id": "8ab5ce51-792e-4d45-aa85-a79317425be0",
+      "title": "Kondagaon Forest Mahua Flowers",
+      "previousCoverPhotoId": "3edc9ca3-2c86-4dd3-a266-96a64c8af3c1",
+      "imageIds": [
+        "195234f8-9905-4a83-bacf-e055daab0c07",
+        "65ce0766-59d4-4b71-86ca-40d351ebb8de"
+      ]
+    },
+    {
+      "id": "0491e1b6-47a8-406d-adf9-34cad4f87987",
+      "title": "Bamboo Table Place Mat Pair",
+      "previousCoverPhotoId": "129ff71e-f7a8-4c05-a165-7976f0771351",
+      "imageIds": [
+        "438d9af7-b0ee-404f-a96d-bc8296f57957",
+        "bb93da43-ff83-4b56-8381-1677410a56f8"
+      ]
+    },
+    {
+      "id": "91d70884-4f35-480f-a8b4-e813d3ac55ee",
+      "title": "Handwoven Bamboo Storage Basket",
+      "previousCoverPhotoId": "ba9a5f0c-f53e-4ab6-8beb-b5f89c8eca6b",
+      "imageIds": [
+        "9cc7c91d-55ac-4e44-ae4c-83f757748f59",
+        "107eab62-8d3b-45ef-bf9d-cb5070975e20"
+      ]
+    },
+    {
+      "id": "93e612e0-3aff-4f54-b623-5e23533ec45d",
+      "title": "Whole Green Moong Beans",
+      "previousCoverPhotoId": "b9ca7629-e3f4-4b76-bfeb-441379f4723a",
+      "imageIds": [
+        "7ba410a7-2208-41e6-9a99-445ed37c0f32",
+        "a6b543ab-4091-4ca5-9b76-11fe131f55ae"
+      ]
+    },
+    {
+      "id": "0fad337d-24a8-42a3-bdf5-d1c8c14df2dd",
+      "title": "Red Amaranth Leaves",
+      "previousCoverPhotoId": "8974c479-bafe-4a49-a7cc-7759ac786b46",
+      "imageIds": [
+        "baeefbd8-9202-431c-b5c0-ed74b682ed8e",
+        "4aa2ab11-62e8-4288-9d35-87ec9cc775de"
+      ]
+    },
+    {
+      "id": "78bbd79e-c333-4b70-be5d-6d85de5a9702",
+      "title": "Fresh Kondagaon Turmeric Root",
+      "previousCoverPhotoId": "093f4802-b11c-42ce-b51e-b937303c22f8",
+      "imageIds": [
+        "361a2c9d-188c-49d3-a270-da7b8b08d8f0",
+        "7efbf16b-6ddf-43e8-97f8-badee40ee2f3"
+      ]
+    },
+    {
+      "id": "52c0503c-4f10-483f-8bcb-b959c253e4ac",
+      "title": "Bamboo and Cane Storage Basket",
+      "previousCoverPhotoId": "46ba1952-80cb-4cc9-9a45-0fe1a10a24cd",
+      "imageIds": [
+        "7c32ffb0-d5fc-4e47-a073-9bf4a6b0ab0b",
+        "e9170e60-3848-4149-b0b3-52007ab4baea"
+      ]
+    },
+    {
+      "id": "54d928e6-d1c9-4e0c-b145-156a5ec39c59",
+      "title": "Bell Metal Tribal Dance Figurine",
+      "previousCoverPhotoId": "7c56b13e-61d1-498a-bc35-98caa7882f5d",
+      "imageIds": [
+        "70a98fdd-c37c-4adb-959f-ff14dd7bf82a",
+        "eb8b8d05-5d72-45bf-8b14-3008e4130663"
+      ]
+    },
+    {
+      "id": "7b1001dc-5067-46bd-bbdd-555c61266bf7",
+      "title": "Handwoven Kosa Silk Table Runner",
+      "previousCoverPhotoId": "67d5ab14-8cbe-46e5-b3d4-63abda67d245",
+      "imageIds": [
+        "5ac0128e-a35f-4e9b-bd45-d1250179ec6e",
+        "38647482-09e3-4d54-966a-d61bb3bcb263"
+      ]
+    },
+    {
+      "id": "7f24bd70-2cbc-4d37-b518-731f0e1e79c7",
+      "title": "Handmade Clay Water Pitcher",
+      "previousCoverPhotoId": "11f47378-dfbc-4ca9-ba22-8b214e403e42",
+      "imageIds": [
+        "59d0472b-4082-41c2-9db1-480f81dafb6a",
+        "7ea1ee53-0bff-4c10-ab16-7f907321b556"
+      ]
+    },
+    {
+      "id": "cad04256-bcec-4c8b-9716-4ae3041228d0",
+      "title": "Hand-Thrown Terracotta Water Matka",
+      "previousCoverPhotoId": "9fcf36a9-e376-41d9-9f9d-59fdd9f80454",
+      "imageIds": [
+        "d97db8f0-c95e-49d8-9da2-15342f5e6448",
+        "b2b5a228-c145-45cd-ac80-898e40275c3c"
+      ]
+    },
+    {
+      "id": "c765fa89-8e45-41f0-a98f-a0c099f83f94",
+      "title": "Woven Cotton Cushion Cover Pair",
+      "previousCoverPhotoId": "f1ab7f92-69fd-479c-bd83-a746c6aced9c",
+      "imageIds": [
+        "1d3f5d9d-71b2-4c28-870b-bd80c84ab0ca",
+        "36593ea1-56da-4c06-9a30-11c347eed239"
+      ]
+    },
+    {
+      "id": "1b90d0f1-2368-4166-bad8-a9063f5d55f4",
+      "title": "Wild Forest Black Pepper",
+      "previousCoverPhotoId": "de7c915d-a9c0-49fc-8fb5-e0a7b7908bf2",
+      "imageIds": [
+        "001c5092-c390-4f0e-99dc-48c33c2677c3",
+        "cfad00d2-172e-4e5f-9520-24f62d4e63f7"
+      ]
+    },
+    {
+      "id": "777b6d8b-ff69-4438-87b5-4f87333ca632",
+      "title": "Bamboo Kitchen Utensil Holder",
+      "previousCoverPhotoId": "37a5d985-0fc4-43a7-8d90-30a6bbd00d31",
+      "imageIds": [
+        "e1557ebc-6dea-4290-807f-eee5bb7bc5df",
+        "95af79a9-9c0c-4bd5-b425-b628c92cdb59"
+      ]
+    }
+  ],
+  "oldPhotosPreserved": true
+}

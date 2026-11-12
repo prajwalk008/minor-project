@@ -6,7 +6,7 @@ export type ListingInput = {
   village: string; pickupLocation: Coordinate;
 };
 export type Draft = { localId: string; clientPhotoId: string; photoRef: string; photoMimeType: string; fields: ListingInput; status: 'draft' | 'queued' | 'uploading' | 'failed' | 'published'; error?: string };
-export type Listing = ListingInput & { id: string; sellerId: string; sellerName?: string; averageRating?: number | null; reviewCount?: number; unitsSold?: number; availableQuantity: number; imageUrl: string | null; status: string };
+export type Listing = ListingInput & { id: string; sellerId: string; sellerName?: string; averageRating?: number | null; reviewCount?: number; unitsSold?: number; availableQuantity: number; imageUrl: string | null; imageUrls?: string[]; imageCredits?: { sourceUrl: string; author: string; license: string; licenseUrl: string; illustrative: boolean }[]; status: string };
 export type ProductReview = { id: string; rating: number; body: string; buyerName: string; createdAt: string; imageUrls: string[] };
 export type ReviewImage = { base64: string; mimeType: string };
 export type PublicSeller = { id: string; name: string; joinedAt: string };
